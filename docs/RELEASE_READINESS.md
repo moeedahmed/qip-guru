@@ -44,6 +44,8 @@ The source freshness dry-run lists URLs only. Before an actual public release, r
 python3 scripts/check_sources.py
 ```
 
+The Australian Commission NSQHS Standards page is browser-verified as live on 2026-07-05. It may still report a `NOTE` in the command-line source checker because the official site can time out for CLI clients; this is expected and should not block release when the browser verification remains current.
+
 ## Synthetic Demo Proof
 
 The release smoke check must demonstrate all of the following without real patient data:
@@ -86,6 +88,7 @@ Before any external/public action, verify:
 - [ ] `SAFETY.md` says the kit is educational and not reliable de-identification for real patient data.
 - [ ] `docs/PRODUCT_POSITIONING.md` is current.
 - [ ] Source profile URLs have been re-checked and `checked_on` dates updated where needed.
+- [ ] Browser/manual verification is documented for any official source that reports an expected CLI `NOTE`.
 - [ ] All examples are synthetic and marked as synthetic.
 - [ ] Valid-checksum NHS-number examples use the NHS England synthetic `999` test range convention, with only one invalid-checksum row retained for `POSSIBLE_NHS_NUMBER`.
 - [ ] Synthetic run-chart examples are included and do not imply live clinical performance benchmarking.

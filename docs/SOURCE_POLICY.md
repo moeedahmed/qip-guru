@@ -50,4 +50,4 @@ python3 scripts/check_sources.py --dry-run
 python3 scripts/check_sources.py
 ```
 
-Some official sites are slow or block command-line clients. If a source has an `expected_slow` URL-check annotation, the checker reports a `NOTE` rather than a warning, and the source still needs browser/manual verification before public release.
+Some official sites are slow or block command-line clients. If a source has an `expected_slow` URL-check annotation, the checker reports a `NOTE` rather than a warning. The source needs browser/manual verification before public release, and the verification should be recorded in the source metadata or release notes.

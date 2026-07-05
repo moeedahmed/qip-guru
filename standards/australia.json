@@ -17,7 +17,7 @@
       "checked_on": "2026-07-05",
       "url_check": {
         "expected_slow": true,
-        "reason": "official site may time out for command-line clients; verify in browser before public release"
+        "reason": "official site may time out for command-line clients; browser verified 2026-07-05 before public release"
       }
     },
     {
