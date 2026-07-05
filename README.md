@@ -5,6 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-release%20candidate-orange.svg)](docs/RELEASE_READINESS.md)
 
+![QIP Guru hero image showing agent-native healthcare QI scaffolding, run charts, source profiles, local checks, and safety verification.](docs/assets/qip-guru-hero.jpg)
+
 QIP Guru is an agent-native, local-first healthcare quality-improvement toolkit for building source-grounded QIP and audit project scaffolds without using patient data.
 
 It gives clinicians, QI teams, and agent builders a tested open-source foundation for safe improvement work: country source profiles, synthetic examples, copyable agent skill guides, lightweight run-chart annotation, and deterministic safety checks.
