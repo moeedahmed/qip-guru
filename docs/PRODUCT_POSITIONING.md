@@ -57,13 +57,13 @@ QIP Guru should not be positioned as a full QI platform yet.
 
 The public wedge is:
 
-> Open-source, local-first, agent-ready QIP scaffolding with source-grounded country profiles, synthetic-safe examples, and deterministic safety checks.
+> Agent-native, local-first QIP scaffolding with source-grounded country profiles, synthetic-safe examples, deterministic safety checks, and release-tested CLI workflows.
 
 ## Release Copy Boundary
 
 Public copy should say:
 
-> QIP Guru helps clinicians and QI teams structure quality-improvement work with source-grounded scaffolds, static agent skill guides, synthetic examples, and local safety checks.
+> QIP Guru helps clinicians, QI teams, and agent builders structure quality-improvement work with source-grounded scaffolds, static agent skill guides, synthetic examples, and local safety checks.
 
 Public copy should not say:
 

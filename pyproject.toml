@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "qip-guru"
 version = "0.1.0rc1"
-description = "QIP Guru: local-first healthcare QI scaffold, source profiles, static skill guides, and deterministic de-id helpers."
+description = "QIP Guru: agent-native local-first healthcare QI scaffolds, source profiles, static skill guides, synthetic examples, and deterministic safety checks."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [
   { name = "Moeed Ahmed" }
 ]
-keywords = ["quality-improvement", "clinical-audit", "patient-safety", "healthcare", "qip"]
+keywords = ["quality-improvement", "clinical-audit", "patient-safety", "healthcare", "qip", "agent-native"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Healthcare Industry",

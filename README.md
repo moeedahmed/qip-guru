@@ -1,12 +1,37 @@
 # QIP Guru
 
-[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](.github/workflows/ci.yml)
+[![CI](https://github.com/moeedahmed/qip-guru/actions/workflows/ci.yml/badge.svg)](https://github.com/moeedahmed/qip-guru/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-release%20candidate-orange.svg)](docs/RELEASE_READINESS.md)
 
-QIP Guru is a local-first open-source toolkit for clinicians, QI teams, and agent builders to structure healthcare improvement projects with source-grounded governance profiles, static agent skill guides, synthetic examples, and a deterministic assistive de-identification scanner. No patient data required.
+QIP Guru is an agent-native, local-first healthcare quality-improvement toolkit for building source-grounded QIP and audit project scaffolds without using patient data.
 
-This MVP is deliberately small:
+It gives clinicians, QI teams, and agent builders a tested open-source foundation for safe improvement work: country source profiles, synthetic examples, copyable agent skill guides, lightweight run-chart annotation, and deterministic safety checks.
+
+```bash
+git clone https://github.com/moeedahmed/qip-guru.git
+cd qip-guru
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -e ".[dev]"
+qip-guru sources list
+qip-guru new uk_demo --profile uk
+```
+
+> Release state: `0.1.0rc1` public release candidate. QIP Guru is not on PyPI yet; install from a checkout for now.
+
+## Why QIP Guru
+
+Most QI resources are scattered across templates, guidance PDFs, teaching sites, local governance routes, and platform-specific tools. QIP Guru is designed to be the open-source starting point that humans and agents can both use safely:
+
+- **Agent-native by design:** structured templates, source profiles, static skill guides, deterministic CLI checks, and outputs that agents can read, modify, verify, and extend.
+- **Source-grounded:** global, UK, US, Canadian, and Australian profiles point back to primary QI, audit, patient-safety, and reporting sources.
+- **Local-first:** no hosted service, no dashboard, no telemetry, no LLM calls, no MCP calls, and no external API calls at runtime.
+- **Synthetic-safe:** examples are synthetic; the release gate checks the NHS `999` test-range convention and blocks tracked generated artefacts.
+- **Release-tested:** CI runs across Ubuntu, macOS, Windows, and Python 3.11-3.14, with tests, compile checks, release smoke, source checks, packaging, and installed CLI proof.
+
+## What It Does
 
 - Creates a local QIP project scaffold from static templates.
 - Attaches a source profile such as `global`, `uk`, `us`, `canada`, or `australia`.
@@ -40,8 +65,9 @@ See `docs/PRODUCT_POSITIONING.md` for naming and non-claim guidance.
 From a local checkout:
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 python3 -m pip install -e ".[dev]"
-qip-guru sources list
 ```
 
 > **Homebrew Python / modern Linux note:** If you see `error: externally-managed-environment` (PEP 668), create a virtual environment first:
@@ -202,7 +228,17 @@ QIP Guru is not trying to replace mature QI platforms or statistical packages at
 - **IHI, NHS IMPACT, HQIP, SQUIRE, AHRQ, and Healthcare Excellence Canada** are source and training benchmarks. QIP Guru links users back to source-grounded methods rather than copying guidance.
 - **runcharter, qicharts, and spccharter** are open-source R charting benchmarks. QIP Guru's run-chart helper is deliberately lightweight; stronger SPC support may come later.
 
-The wedge is: open-source, local-first, agent-ready QIP scaffolding with source-grounded country profiles, synthetic-safe examples, and deterministic safety checks.
+The wedge is: agent-native, local-first QIP scaffolding with source-grounded country profiles, synthetic-safe examples, deterministic safety checks, and release-tested CLI workflows.
+
+## Roadmap
+
+The next useful improvements are practical, not platform theatre:
+
+- Stronger run-chart and SPC support while staying CSV-first and transparent.
+- More polished synthetic project packs for ED flow, sepsis documentation, analgesia time, and other common healthcare QI themes.
+- More source profiles and local-governance prompts, with clear boundaries between QIP, audit, service evaluation, research, and incident learning.
+- Better agent workflow hooks so coding and clinical agents can inspect the same scaffold, source map, safety checks, and release proof.
+- A lightweight public launch page after the GitHub repo is settled; not a hosted QI platform yet.
 
 ## Limitations
 
