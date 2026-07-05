@@ -279,7 +279,7 @@ def _select_install_smoke_python() -> str:
             continue
         seen.add(resolved)
         result = subprocess.run(
-            [resolved, "-c", "import setuptools.build_meta"],
+            [resolved, "-c", "import setuptools.build_meta; import wheel.bdist_wheel"],
             capture_output=True,
             text=True,
             check=False,
@@ -287,7 +287,7 @@ def _select_install_smoke_python() -> str:
         if result.returncode == 0:
             return resolved
     raise RuntimeError(
-        "install smoke needs a local Python with setuptools.build_meta available "
+        "install smoke needs a local Python with setuptools.build_meta and wheel available "
         "because it runs without network access or build isolation"
     )
 
