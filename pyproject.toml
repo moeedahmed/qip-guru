@@ -8,7 +8,7 @@ version = "0.1.0rc1"
 description = "QIP Guru: local-first healthcare QI scaffold, source profiles, static skill guides, and deterministic de-id helpers."
 readme = "README.md"
 requires-python = ">=3.11"
-license = "MIT"
+license = { text = "MIT" }
 authors = [
   { name = "Moeed Ahmed" }
 ]
