@@ -1,0 +1,42 @@
+{
+  "id": "us",
+  "name": "United States",
+  "summary": "US starter profile for healthcare quality, safety, teamwork, and measurement. Local payer, state, hospital, IRB, and compliance requirements must still be checked.",
+  "use_for": [
+    "US quality and safety source orientation",
+    "AHRQ tool prompts",
+    "teamwork and patient-safety improvement",
+    "local standards discovery"
+  ],
+  "sources": [
+    {
+      "title": "Toolkit for Using the AHRQ Quality Indicators",
+      "organisation": "Agency for Healthcare Research and Quality",
+      "url": "https://www.ahrq.gov/patient-safety/settings/hospital/resource/qitool/index.html",
+      "use": "hospital quality indicators and improvement toolkit orientation",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "TeamSTEPPS 3.0",
+      "organisation": "Agency for Healthcare Research and Quality",
+      "url": "https://www.ahrq.gov/teamstepps-program/index.html",
+      "use": "teamwork, communication, and safety intervention prompts",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "SQUIRE 2.0",
+      "organisation": "Standards for Quality Improvement Reporting Excellence",
+      "url": "https://www.squire-statement.org/index.cfm?fuseaction=Page.ViewPage&pageId=525",
+      "use": "publication and reporting structure for improvement work",
+      "checked_on": "2026-07-04"
+    }
+  ],
+  "incident_learning": {
+    "position": "US incident-learning routes are local and organisation-specific. Use this profile only to prompt source discovery and safety-team involvement, not to decide reportability or legal disclosure duties.",
+    "boundaries": [
+      "check local patient-safety, risk, compliance, and legal routes",
+      "do not process identifiable event narratives",
+      "do not classify regulatory reportability"
+    ]
+  }
+}

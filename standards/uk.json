@@ -1,0 +1,71 @@
+{
+  "id": "uk",
+  "name": "United Kingdom",
+  "summary": "UK NHS-oriented profile for QIP, clinical audit, and patient-safety incident learning. Use local Trust, Board, ICB, or national specialty standards where they apply.",
+  "use_for": [
+    "NHS clinical audit and QIP planning",
+    "local governance classification",
+    "PSIRF-aware incident learning",
+    "UK source prompts for audit standards"
+  ],
+  "sources": [
+    {
+      "title": "Best Practice in Clinical Audit",
+      "organisation": "Healthcare Quality Improvement Partnership",
+      "url": "https://www.hqip.org.uk/guidance/best-practice-in-clinical-audit/",
+      "use": "clinical audit cycle, standards, measurement, and re-audit discipline",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "A guide to quality improvement tools",
+      "organisation": "Healthcare Quality Improvement Partnership",
+      "url": "https://www.hqip.org.uk/guidance/guide-to-quality-improvement-methods/",
+      "use": "overview of QI tools including clinical audit, PDSA, Model for Improvement, Lean/Six Sigma, benchmarking, process mapping, SPC, and root-cause analysis",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "Improvement resources",
+      "organisation": "NHS England NHS IMPACT",
+      "url": "https://www.england.nhs.uk/nhsimpact/improvement-resources/",
+      "use": "NHS improvement resource directory including improvement guides, data resources, QI toolkits, huddle sheets, and training links",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "Resources",
+      "organisation": "National Quality Improvement (incl. Clinical Audit) Network",
+      "url": "https://nqican.org.uk/resources/",
+      "use": "UK clinical audit and QI network resource directory linking HQIP, Making Data Count, Model Health System, Q, Health Foundation, CQC, GIRFT, and clinical audit support resources",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "Patient Safety Incident Response Framework",
+      "organisation": "NHS England",
+      "url": "https://www.england.nhs.uk/long-read/patient-safety-incident-response-framework/",
+      "use": "UK patient-safety incident response and learning framework",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "PSIRF supporting guidance",
+      "organisation": "NHS England",
+      "url": "https://www.england.nhs.uk/publication/patient-safety-incident-response-framework-and-supporting-guidance/",
+      "use": "proportionate response, involvement, oversight, standards, policy, and plan templates",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "Model for Improvement",
+      "organisation": "Institute for Healthcare Improvement",
+      "url": "https://www.ihi.org/library/model-for-improvement",
+      "use": "portable QI method used alongside NHS local governance",
+      "checked_on": "2026-07-04"
+    }
+  ],
+  "incident_learning": {
+    "position": "PSIRF belongs in a UK incident-learning module. It can generate improvement priorities and actions, but it should not be merged into the generic QIP core because it is jurisdiction-specific and governance-sensitive.",
+    "boundaries": [
+      "do not process identifiable incident narratives in this kit",
+      "keep PSIRF narratives inside approved NHS systems",
+      "do not infer PSIRF response type from sparse chat notes",
+      "separate learning response, improvement action, and QIP measurement plan"
+    ]
+  }
+}

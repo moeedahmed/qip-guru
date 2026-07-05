@@ -1,0 +1,24 @@
+# Safety
+
+QIP Guru Kit is a public-safe educational scaffold for quality improvement and audit preparation.
+
+Hard boundaries:
+
+- Assistive de-id only. The scanner uses deterministic pattern matching and cannot prove that data is anonymous.
+- The scanner is not reliable de-identification for real patient data.
+- Names and free-text identifiers are not covered.
+- This is not clinical decision support.
+- This is not an information governance tool of record.
+- This is not governance, audit, ethics, Caldicott, IG, or publication approval.
+- Do not use real patient-identifiable data in this kit.
+
+Before using any output in a real NHS QIP or audit:
+
+- Confirm the project route with the local QI, audit, or clinical governance team.
+- Confirm data handling with the local IG or Caldicott route.
+- Minimise data before extraction.
+- Use synthetic or fully de-identified data for development and demonstrations.
+- Keep source data in approved systems only.
+- Check small numbers and rare combinations for re-identification risk.
+
+The included example data is synthetic test data with planted fake identifiers for scanner tests.

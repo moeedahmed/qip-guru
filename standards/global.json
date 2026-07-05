@@ -1,0 +1,42 @@
+{
+  "id": "global",
+  "name": "Global Core",
+  "summary": "Universal quality improvement and patient-safety source profile. Use this when the country-specific governance route is unknown or when building portable agent behaviour.",
+  "use_for": [
+    "generic QIP structure",
+    "PDSA and measurement planning",
+    "international publication/reporting discipline",
+    "patient-safety learning orientation"
+  ],
+  "sources": [
+    {
+      "title": "Model for Improvement",
+      "organisation": "Institute for Healthcare Improvement",
+      "url": "https://www.ihi.org/library/model-for-improvement",
+      "use": "aims, measures, changes, and PDSA cycles as the universal improvement method",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "SQUIRE 2.0",
+      "organisation": "Standards for Quality Improvement Reporting Excellence",
+      "url": "https://www.squire-statement.org/index.cfm?fuseaction=Page.ViewPage&pageId=525",
+      "use": "international reporting structure for healthcare improvement work",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "Global Patient Safety Action Plan 2021-2030",
+      "organisation": "World Health Organization",
+      "url": "https://www.who.int/publications/i/item/9789240032705",
+      "use": "global patient-safety framing and policy context",
+      "checked_on": "2026-07-04"
+    }
+  ],
+  "incident_learning": {
+    "position": "Incident learning is adjacent to QIP, not identical to QIP. Use it to identify system learning and improvement actions; convert actions into QIP only when there is a defined aim, measures, change theory, and follow-up.",
+    "boundaries": [
+      "do not treat incident review as publication-ready QIP by itself",
+      "do not process identifiable incident narratives in public or generic agent tools",
+      "check local disclosure, duty of candour, and investigation requirements"
+    ]
+  }
+}

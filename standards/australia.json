@@ -1,0 +1,46 @@
+{
+  "id": "australia",
+  "name": "Australia",
+  "summary": "Australian starter profile anchored in national safety and quality standards. State, territory, hospital, and accreditation requirements must still be checked.",
+  "use_for": [
+    "Australian clinical governance and safety standards orientation",
+    "NSQHS source prompts",
+    "consumer partnership and First Nations health considerations",
+    "local accreditation-aware QIP framing"
+  ],
+  "sources": [
+    {
+      "title": "National Safety and Quality Health Service Standards",
+      "organisation": "Australian Commission on Safety and Quality in Health Care",
+      "url": "https://www.safetyandquality.gov.au/national-standards/nsqhs-standards",
+      "use": "national safety and quality standards, clinical governance, partnering with consumers, and accreditation context",
+      "checked_on": "2026-07-05",
+      "url_check": {
+        "allow_transient_failure": true,
+        "reason": "official site may time out for command-line clients; verify in browser before public release"
+      }
+    },
+    {
+      "title": "Model for Improvement",
+      "organisation": "Institute for Healthcare Improvement",
+      "url": "https://www.ihi.org/library/model-for-improvement",
+      "use": "portable QI method used alongside Australian standards",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "SQUIRE 2.0",
+      "organisation": "Standards for Quality Improvement Reporting Excellence",
+      "url": "https://www.squire-statement.org/index.cfm?fuseaction=Page.ViewPage&pageId=525",
+      "use": "publication and reporting structure",
+      "checked_on": "2026-07-04"
+    }
+  ],
+  "incident_learning": {
+    "position": "Australian incident-learning work should be linked to local clinical governance and NSQHS-aligned systems, but state, territory, and service policy decide formal response routes.",
+    "boundaries": [
+      "check local clinical governance and open disclosure policies",
+      "do not process identifiable incident narratives",
+      "separate accreditation evidence from QIP measurement claims"
+    ]
+  }
+}

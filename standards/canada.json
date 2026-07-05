@@ -1,0 +1,49 @@
+{
+  "id": "canada",
+  "name": "Canada",
+  "summary": "Canadian starter profile for patient safety, quality, cultural safety, and incident analysis. Provincial, organisational, and Indigenous health requirements must be checked locally.",
+  "use_for": [
+    "Canadian quality and patient-safety orientation",
+    "patient-safety essentials prompts",
+    "incident-analysis learning prompts",
+    "cultural safety considerations"
+  ],
+  "sources": [
+    {
+      "title": "Patient Safety Essentials",
+      "organisation": "Healthcare Excellence Canada",
+      "url": "https://www.healthcareexcellence.ca/programs/patient-safety-essentials/",
+      "use": "patient safety fundamentals, incident analysis, cultural safety, and proactive safety prompts",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "Programs Directory",
+      "organisation": "Healthcare Excellence Canada",
+      "url": "https://www.healthcareexcellence.ca/programs/",
+      "use": "Canadian quality and safety programme discovery",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "HiQuiPs",
+      "organisation": "CanadiEM",
+      "url": "https://canadiem.org/hiquips/",
+      "use": "Canadian emergency medicine QI and patient-safety education series covering project preparation, stakeholder engagement, root-cause analysis, PDSA, run charts, SPC, ethics, SQUIRE, and QIPS infrastructure",
+      "checked_on": "2026-07-04"
+    },
+    {
+      "title": "SQUIRE 2.0",
+      "organisation": "Standards for Quality Improvement Reporting Excellence",
+      "url": "https://www.squire-statement.org/index.cfm?fuseaction=Page.ViewPage&pageId=525",
+      "use": "international publication and reporting structure",
+      "checked_on": "2026-07-04"
+    }
+  ],
+  "incident_learning": {
+    "position": "Canada profile should support patient-safety learning and analysis, but local provincial and organisational requirements decide formal reporting, disclosure, and investigation routes.",
+    "boundaries": [
+      "check provincial and organisational governance",
+      "include cultural safety prompts where relevant",
+      "do not make legal or regulatory reportability decisions"
+    ]
+  }
+}
