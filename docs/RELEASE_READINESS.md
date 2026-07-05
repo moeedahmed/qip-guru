@@ -1,10 +1,10 @@
 # Release Readiness Gate
 
-This gate is for shaping QIP Guru Kit toward a public-safe release. Passing it does not mean the project is published, clinically approved, or safe for real patient data.
+This gate is for shaping QIP Guru toward a public-safe release. Passing it does not mean the project is published, clinically approved, or safe for real patient data.
 
 ## Current Product Verdict
 
-QIP Guru is the public brand. QIP Guru Kit is the repo/toolkit. The current release shape is:
+QIP Guru is the public brand and repo/toolkit. The current release shape is:
 
 - repo/toolkit: yes
 - static skills: yes
@@ -32,7 +32,7 @@ Run from the repo root:
 
 ```bash
 python3 -m pytest -q
-python3 -m compileall qip.py qipkit tests scripts
+python3 -m compileall qip.py qip_guru tests scripts
 python3 scripts/release_check.py --install-smoke
 python3 scripts/check_sources.py --dry-run
 ```
@@ -67,9 +67,9 @@ python3 scripts/release_check.py --install-smoke
 
 Before any external/public action, verify:
 
-- public repo/toolkit name: QIP Guru Kit
-- Python distribution name: `qip-guru-kit`
-- Python import package: `qipkit`
+- public repo/toolkit name: QIP Guru
+- Python distribution name: `qip-guru`
+- Python import package: `qip_guru`
 - CLI command: `qip`
 - no `.egg-info`, cache, build, dist, venv, or generated smoke-output files are included
 - no real patient, staff, organisation-sensitive, or incident-identifiable data is included
@@ -77,14 +77,14 @@ Before any external/public action, verify:
 
 ## Public Release Checklist
 
-- [ ] README leads with QIP Guru Kit positioning and no-engine boundary.
+- [ ] README leads with QIP Guru positioning and no-engine boundary.
 - [ ] `SAFETY.md` says the kit is educational and not reliable de-identification for real patient data.
 - [ ] `docs/PRODUCT_POSITIONING.md` is current.
 - [ ] Source profile URLs have been re-checked and `checked_on` dates updated where needed.
 - [ ] All examples are synthetic and marked as synthetic.
 - [ ] No generated `.egg-info`, cache, build, or virtual environment files are included in the release diff.
 - [ ] Tests, compileall, source dry-run, and install smoke pass locally.
-- [ ] Package/distribution naming is `qip-guru-kit`; import remains `qipkit`; CLI remains `qip`.
+- [ ] Package/distribution naming is `qip-guru`; import remains `qip_guru`; CLI remains `qip`.
 - [ ] Founder/product review has approved public copy.
 - [ ] Medic/clinical safety review has approved boundaries and non-claims.
 

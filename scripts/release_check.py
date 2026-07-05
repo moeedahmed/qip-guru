@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local release-readiness smoke check for QIP Guru Kit."""
+"""Local release-readiness smoke check for QIP Guru."""
 
 from __future__ import annotations
 
@@ -14,9 +14,9 @@ from typing import Iterator
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from qipkit.deid import redact_file, scan_file  # noqa: E402
-from qipkit.scaffold import create_project  # noqa: E402
-from qipkit.sources import format_profile, list_profiles, load_profile  # noqa: E402
+from qip_guru.deid import redact_file, scan_file  # noqa: E402
+from qip_guru.scaffold import create_project  # noqa: E402
+from qip_guru.sources import format_profile, list_profiles, load_profile  # noqa: E402
 
 
 EXPECTED_PROFILES = {"global", "uk", "us", "canada", "australia"}
@@ -38,7 +38,7 @@ REQUIRED_SKILLS = {
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run local QIP Guru Kit release-readiness smoke checks.")
+    parser = argparse.ArgumentParser(description="Run local QIP Guru release-readiness smoke checks.")
     parser.add_argument(
         "--workdir",
         help="empty directory for generated synthetic scaffolds; defaults to a temporary directory",
@@ -205,7 +205,7 @@ def _prepared_workdir(raw_workdir: str | None) -> Iterator[Path]:
         yield workdir
         return
 
-    with TemporaryDirectory(prefix="qip-guru-kit-release-") as temp_dir:
+    with TemporaryDirectory(prefix="qip-guru-release-") as temp_dir:
         yield Path(temp_dir)
 
 

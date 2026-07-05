@@ -1,4 +1,4 @@
-from qipkit.sources import format_profile, list_profiles, load_profile, source_map_markdown
+from qip_guru.sources import format_profile, list_profiles, load_profile, source_map_markdown
 
 
 def test_source_profiles_load_with_required_sources():

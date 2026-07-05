@@ -1,4 +1,4 @@
-"""Project scaffold creation for QIP Guru Kit."""
+"""Project scaffold creation for QIP Guru."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ from contextlib import suppress
 from datetime import date as date_type
 from pathlib import Path
 
-from qipkit.paths import data_path
-from qipkit.sources import load_profile, source_map_markdown
+from qip_guru.paths import data_path
+from qip_guru.sources import load_profile, source_map_markdown
 
 
 SCAFFOLD_FILES = (

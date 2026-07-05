@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""QIP Guru Kit command line interface."""
+"""QIP Guru command line interface."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ import argparse
 from pathlib import Path
 import sys
 
-from qipkit.deid import redact_file, scan_file
-from qipkit.scaffold import create_project
-from qipkit.sources import format_profile, list_profiles, load_profile
+from qip_guru.deid import redact_file, scan_file
+from qip_guru.scaffold import create_project
+from qip_guru.sources import format_profile, list_profiles, load_profile
 
 
 def main(argv: list[str] | None = None) -> int:

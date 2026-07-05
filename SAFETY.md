@@ -1,6 +1,6 @@
 # Safety
 
-QIP Guru Kit is a public-safe educational scaffold for quality improvement and audit preparation.
+QIP Guru is a public-safe educational scaffold for quality improvement and audit preparation.
 
 Hard boundaries:
 

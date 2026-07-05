@@ -1,6 +1,6 @@
 # Architecture
 
-QIP Guru Kit is an umbrella project, not one monolithic agent.
+QIP Guru is an umbrella project, not one monolithic agent.
 
 ## Layers
 
@@ -34,8 +34,7 @@ Agents are good at drafting, interviewing, adapting, and critique. CLIs are bett
 
 The right public product is therefore:
 
-- QIP Guru as the public brand
-- QIP Guru Kit as the open-source repo/toolkit
+- QIP Guru as the public brand and open-source repo/toolkit
 - skills as agent behaviour
 - CLI as deterministic tooling
 - country modules as source/governance adapters

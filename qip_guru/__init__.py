@@ -1,3 +1,3 @@
-"""QIP Guru Kit helpers."""
+"""QIP Guru helpers."""
 
 __all__ = ["deid", "paths", "scaffold", "sources"]

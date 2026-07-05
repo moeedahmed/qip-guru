@@ -1,6 +1,6 @@
 # Contributing
 
-QIP Guru Kit is a public-safe educational scaffold for healthcare quality improvement and audit work. Contributions should improve structure, source grounding, static skill guides, or deterministic local tooling without turning the kit into clinical decision support, governance approval software, a hosted agent engine, or a patient-data processor.
+QIP Guru is a public-safe educational scaffold for healthcare quality improvement and audit work. Contributions should improve structure, source grounding, static skill guides, or deterministic local tooling without turning the kit into clinical decision support, governance approval software, a hosted agent engine, or a patient-data processor.
 
 ## Core Rules
 
@@ -76,7 +76,7 @@ Run from the repo root:
 ```bash
 python3 -m pip install -e ".[dev]"
 python3 -m pytest -q
-python3 -m compileall qip.py qipkit tests scripts
+python3 -m compileall qip.py qip_guru tests scripts
 qip sources list
 qip deid scan examples/synthetic_ward_audit.csv
 python3 scripts/release_check.py --install-smoke

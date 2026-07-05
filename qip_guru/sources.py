@@ -1,4 +1,4 @@
-"""Source profile loading for QIP Guru Kit."""
+"""Source profile loading for QIP Guru."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from qipkit.paths import data_path
+from qip_guru.paths import data_path
 
 
 STANDARDS_DIR = data_path("standards")

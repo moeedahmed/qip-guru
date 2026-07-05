@@ -1,6 +1,6 @@
-# QIP Guru Kit
+# QIP Guru
 
-QIP Guru is the public product concept. QIP Guru Kit is this open-source repo/toolkit: a local-first starter kit for clinicians, QI teams, and agent builders to structure healthcare improvement projects with source-grounded governance profiles, static agent skill guides, synthetic examples, and a deterministic assistive de-identification scanner. No patient data required.
+QIP Guru is a local-first open-source toolkit for clinicians, QI teams, and agent builders to structure healthcare improvement projects with source-grounded governance profiles, static agent skill guides, synthetic examples, and a deterministic assistive de-identification scanner. No patient data required.
 
 This MVP is deliberately small:
 
@@ -16,10 +16,9 @@ This is an educational scaffold. It is not an information governance tool of rec
 
 ## Product Verdict
 
-- Public brand: QIP Guru.
-- Open-source repo/toolkit: QIP Guru Kit.
-- Python distribution: `qip-guru-kit`.
-- Python import package: `qipkit`.
+- Public brand and open-source repo: QIP Guru.
+- Python distribution: `qip-guru`.
+- Python import package: `qip_guru`.
 - Static skills: included as guide material in `skills/`.
 - Local CLI: included as `qip` / `python3 qip.py`.
 - Engine: not yet. There is no hosted runtime, model orchestration layer, MCP server, dashboard, or background service.
@@ -54,7 +53,7 @@ You can also run the repo-local script directly with `python3 qip.py ...`. If yo
 
 ## Quickstart
 
-Run these commands from inside a QIP Guru Kit checkout after installing the local package:
+Run these commands from inside a QIP Guru checkout after installing the local package:
 
 ```bash
 qip new demo_qip_project
@@ -148,7 +147,7 @@ Run the local release smoke check before any public-facing release work:
 
 ```bash
 python3 -m pytest -q
-python3 -m compileall qip.py qipkit tests scripts
+python3 -m compileall qip.py qip_guru tests scripts
 python3 scripts/release_check.py --install-smoke
 python3 scripts/check_sources.py --dry-run
 ```

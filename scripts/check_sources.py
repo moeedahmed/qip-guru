@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check QIP Guru Kit source profile URLs for obvious link rot."""
+"""Check QIP Guru source profile URLs for obvious link rot."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from qipkit.sources import list_profiles  # noqa: E402
+from qip_guru.sources import list_profiles  # noqa: E402
 
 
 BROWSER_HEADERS = {
@@ -29,7 +29,7 @@ BROWSER_HEADERS = {
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Check QIP Guru Kit source profile URLs.")
+    parser = argparse.ArgumentParser(description="Check QIP Guru source profile URLs.")
     parser.add_argument("--dry-run", action="store_true", help="list URLs without making network requests")
     parser.add_argument("--timeout", type=float, default=10.0, help="request timeout in seconds")
     args = parser.parse_args(argv)

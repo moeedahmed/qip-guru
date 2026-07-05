@@ -3,9 +3,9 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "qip-guru-kit"
+name = "qip-guru"
 version = "0.1.0rc1"
-description = "QIP Guru Kit: local-first healthcare QI scaffold, source profiles, static skill guides, and deterministic de-id helpers."
+description = "QIP Guru: local-first healthcare QI scaffold, source profiles, static skill guides, and deterministic de-id helpers."
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
@@ -18,6 +18,9 @@ classifiers = [
   "Intended Audience :: Healthcare Industry",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Scientific/Engineering :: Medical Science Apps."
 ]
 dependencies = []
@@ -32,9 +35,9 @@ qip = "qip:main"
 py-modules = ["qip"]
 
 [tool.setuptools.packages.find]
-include = ["qipkit*"]
+include = ["qip_guru*"]
 
 [tool.setuptools.data-files]
-"qip-guru-kit/checklists" = ["checklists/*.md"]
-"qip-guru-kit/standards" = ["standards/*.json"]
-"qip-guru-kit/templates" = ["templates/*.md"]
+"qip-guru/checklists" = ["checklists/*.md"]
+"qip-guru/standards" = ["standards/*.json"]
+"qip-guru/templates" = ["templates/*.md"]
