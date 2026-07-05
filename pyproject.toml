@@ -30,6 +30,7 @@ dev = ["pytest"]
 
 [project.scripts]
 qip = "qip:main"
+qip-guru = "qip:main"
 
 [tool.setuptools]
 py-modules = ["qip"]
@@ -39,5 +40,6 @@ include = ["qip_guru*"]
 
 [tool.setuptools.data-files]
 "qip-guru/checklists" = ["checklists/*.md"]
+"qip-guru/examples" = ["examples/*.csv", "examples/*.md"]
 "qip-guru/standards" = ["standards/*.json"]
 "qip-guru/templates" = ["templates/*.md"]

@@ -57,6 +57,19 @@ Required:
 
 Do not add free-text name detection, clinical NER, or ML-based redaction without a separate design review. That would change the product risk profile.
 
+## Add a Chart or Measurement Helper
+
+Measurement helpers should stay transparent and lightweight unless the project has a reviewed statistical design.
+
+Required:
+
+- synthetic or properly de-identified fixture data
+- tests for normal and failure cases
+- clear output column names
+- documentation of what the helper does and does not prove
+
+Do not imply that QIP Guru provides full statistical process control, clinical benchmarking, or governance-ready performance reporting.
+
 ## Add an Agent Skill Guide
 
 Files in `skills/` are static agent skill guides. They are written so a human or agent can copy them into an agent context. They are not auto-loaded by this repo.
@@ -78,6 +91,7 @@ python3 -m pip install -e ".[dev]"
 python3 -m pytest -q
 python3 -m compileall qip.py qip_guru tests scripts
 qip sources list
+qip-guru charts run-chart examples/synthetic_ed_flow_qip.csv --value-column median_time_to_initial_assessment_minutes --date-column week --baseline-points 4 --out /tmp/ed_flow_run_chart.csv
 qip deid scan examples/synthetic_ward_audit.csv
 python3 scripts/release_check.py --install-smoke
 python3 scripts/check_sources.py --dry-run

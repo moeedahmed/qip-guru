@@ -14,7 +14,7 @@ The current implementation should be described as a repo/toolkit with a small CL
 | Open-source repo/toolkit | QIP Guru | The public package of templates, source profiles, static skills, synthetic examples, and local checks. |
 | Python distribution | `qip-guru` | Public install and package metadata name. |
 | Python helper package | `qip_guru` | Internal helper package for deterministic local file work. |
-| CLI | `qip` / `python3 qip.py` | Local scaffold, source display, and assistive de-id commands. |
+| CLI | `qip-guru` / `qip` / `python3 qip.py` | Local scaffold, source display, run-chart annotation, and assistive de-id commands. |
 | Static skills | `skills/*.md` | Copyable guide material for agent contexts; not auto-loaded by this repo. |
 | Engine | Not yet | No hosted runtime, orchestration layer, model router, MCP server, dashboard, workflow engine, or background service. |
 
@@ -23,6 +23,7 @@ The current implementation should be described as a repo/toolkit with a small CL
 - Creates synthetic-safe QIP and audit project scaffolds.
 - Shows source profiles for global, UK, US, Canadian, and Australian starting points.
 - Provides static agent skill guides for QIP planning, PDSA, audit standards, SMART aims, and incident-learning triage.
+- Analyses synthetic or properly de-identified run-chart CSVs with simple median, shift, and trend annotations.
 - Runs deterministic local scans for a narrow set of supported identifier patterns in CSV or text files.
 - Writes redacted copies without modifying input files.
 
@@ -41,7 +42,22 @@ Use `QIP Guru` when discussing the product, repository, toolkit, or product fami
 
 Use `qip-guru` for Python distribution/package metadata.
 
-Use `qip` for the CLI command and `qip_guru` for the Python helper package.
+Use `qip-guru` for the explicit CLI command, `qip` as the short CLI alias, and `qip_guru` for the Python helper package.
+
+## Competitive Positioning
+
+QIP Guru should not be positioned as a full QI platform yet.
+
+| Benchmark | What They Are Good At | QIP Guru Position |
+| --- | --- | --- |
+| Life QI | Paid QI project platform, reporting, dashboards, organisation portfolio, and community. | Do not compete head-on yet; win as an open-source, local-first starting point for projects and agent workflows. |
+| QI Macros | Excel-based SPC, Pareto, fishbone, templates, and statistics. | Do not claim spreadsheet/SPC parity; offer lightweight CSV annotation and source-grounded scaffolds. |
+| IHI, NHS IMPACT, HQIP, SQUIRE, AHRQ, Healthcare Excellence Canada | Authoritative methods, guidance, training, and reporting standards. | Act as source-grounded scaffolding that points back to primary sources and local governance. |
+| runcharter, qicharts, spccharter | Open-source R packages for run charts and SPC. | Treat as charting-depth benchmarks; QIP Guru's chart helper is intentionally simple at this release stage. |
+
+The public wedge is:
+
+> Open-source, local-first, agent-ready QIP scaffolding with source-grounded country profiles, synthetic-safe examples, and deterministic safety checks.
 
 ## Release Copy Boundary
 

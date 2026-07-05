@@ -9,6 +9,7 @@ QIP Guru is the public brand and repo/toolkit. The current release shape is:
 - repo/toolkit: yes
 - static skills: yes
 - local CLI: yes
+- synthetic run-chart helper: yes
 - source profiles: yes
 - engine: no
 - hosted service: no
@@ -50,10 +51,11 @@ The release smoke check must demonstrate all of the following without real patie
 - UK scaffold generation with UK source-map content.
 - International scaffold generation from global, US, Canadian, and Australian profiles.
 - Source display for profiles through the CLI/source formatting path.
+- Synthetic run-chart annotation for ED flow, sepsis documentation, and analgesia-time demo datasets.
 - Synthetic identifier scan on `examples/synthetic_ward_audit.csv`.
 - Redacted output written to a new file without modifying the input.
 - Static agent skill guides present with source-profile and safety pause anchors.
-- Local install smoke in a temporary venv, proving the packaged `qip` console command can find installed data files outside the source tree.
+- Local install smoke in a temporary venv, proving the packaged `qip-guru` and `qip` console commands can find installed data files and run outside the source tree.
 
 Equivalent release-smoke command:
 
@@ -70,7 +72,7 @@ Before any external/public action, verify:
 - public repo/toolkit name: QIP Guru
 - Python distribution name: `qip-guru`
 - Python import package: `qip_guru`
-- CLI command: `qip`
+- CLI commands: `qip-guru` and `qip`
 - no `.egg-info`, cache, build, dist, venv, or generated smoke-output files are included
 - no real patient, staff, organisation-sensitive, or incident-identifiable data is included
 - `python3 scripts/release_check.py --install-smoke` passes in the extracted checkout
@@ -82,9 +84,10 @@ Before any external/public action, verify:
 - [ ] `docs/PRODUCT_POSITIONING.md` is current.
 - [ ] Source profile URLs have been re-checked and `checked_on` dates updated where needed.
 - [ ] All examples are synthetic and marked as synthetic.
+- [ ] Synthetic run-chart examples are included and do not imply live clinical performance benchmarking.
 - [ ] No generated `.egg-info`, cache, build, or virtual environment files are included in the release diff.
 - [ ] Tests, compileall, source dry-run, and install smoke pass locally.
-- [ ] Package/distribution naming is `qip-guru`; import remains `qip_guru`; CLI remains `qip`.
+- [ ] Package/distribution naming is `qip-guru`; import remains `qip_guru`; CLI commands are `qip-guru` and `qip`.
 - [ ] Founder/product review has approved public copy.
 - [ ] Medic/clinical safety review has approved boundaries and non-claims.
 

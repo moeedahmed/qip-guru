@@ -25,8 +25,14 @@ QIP Guru is an umbrella project, not one monolithic agent.
 4. CLI
    - deterministic file and scaffold work in `qip.py`
    - source profile inspection
+   - lightweight run-chart CSV annotation for synthetic or de-identified datasets
    - local de-id scan/redact
    - no LLM calls, external APIs, MCP server, dashboard, or deployment
+
+5. Synthetic examples
+   - CSV fixtures in `examples/`
+   - safe demo data for ED flow, sepsis documentation, analgesia time, and de-id testing
+   - no real patient, staff, incident, or organisation-sensitive data
 
 ## Why This Shape
 
@@ -37,6 +43,7 @@ The right public product is therefore:
 - QIP Guru as the public brand and open-source repo/toolkit
 - skills as agent behaviour
 - CLI as deterministic tooling
+- examples as synthetic proof fixtures
 - country modules as source/governance adapters
 - no engine until there is a separately reviewed runtime contract
 

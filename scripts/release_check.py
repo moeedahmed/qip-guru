@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from qip_guru.deid import redact_file, scan_file  # noqa: E402
+from qip_guru.charts import analyse_run_chart_csv  # noqa: E402
 from qip_guru.scaffold import create_project  # noqa: E402
 from qip_guru.sources import format_profile, list_profiles, load_profile  # noqa: E402
 
@@ -34,6 +35,11 @@ REQUIRED_SKILLS = {
     "audit-standard-finder.md": ("Confirm the source is current", "local audit or governance team"),
     "draft-smart-aim.md": ("Do not use real patient-identifiable data", "Confirm all real project details"),
     "incident-learning-triage.md": ("Do not ask for names", "PSIRF is relevant"),
+}
+RUN_CHART_EXAMPLES = {
+    "synthetic_ed_flow_qip.csv": "median_time_to_initial_assessment_minutes",
+    "synthetic_sepsis_documentation_qip.csv": "complete_sepsis_screen_percent",
+    "synthetic_analgesia_time_qip.csv": "median_time_to_analgesia_minutes",
 }
 
 
@@ -119,6 +125,20 @@ def run_release_checks(workdir: str | Path) -> list[str]:
             raise AssertionError(f"redacted output still contains planted identifier: {planted_identifier}")
     proof.append(f"deid: {len(findings)} synthetic findings redacted -> {redacted_path}")
 
+    run_chart_dir = base / "run_charts"
+    run_chart_dir.mkdir()
+    for filename, value_column in RUN_CHART_EXAMPLES.items():
+        chart_result = analyse_run_chart_csv(
+            ROOT / "examples" / filename,
+            run_chart_dir / filename,
+            value_column=value_column,
+            date_column="week",
+            baseline_points=4,
+        )
+        if chart_result.shift_signals < 1:
+            raise AssertionError(f"run chart example did not produce shift signal: {filename}")
+    proof.append(f"run-charts: {len(RUN_CHART_EXAMPLES)} synthetic examples analysed -> {run_chart_dir}")
+
     _check_skill_guides()
     proof.append(f"skills: {', '.join(sorted(REQUIRED_SKILLS))}")
 
@@ -139,7 +159,7 @@ def run_install_smoke(workdir: str | Path, python_executable: str | Path | None 
     # Python 3.14 venvs in this environment do not bundle setuptools. System
     # site packages let the no-network install use the already available build backend.
     _run_checked([python, "-m", "venv", "--system-site-packages", str(venv_dir)], cwd=base)
-    venv_python, qip_command = _venv_commands(venv_dir)
+    venv_python, qip_command, qip_guru_command = _venv_commands(venv_dir)
     _run_checked(
         [
             str(venv_python),
@@ -155,11 +175,11 @@ def run_install_smoke(workdir: str | Path, python_executable: str | Path | None 
     )
 
     proof: list[str] = []
-    sources = _run_checked([str(qip_command), "sources", "list"], cwd=base).stdout
+    sources = _run_checked([str(qip_guru_command), "sources", "list"], cwd=base).stdout
     for profile_id in EXPECTED_PROFILES:
         if f"{profile_id}\t" not in sources:
-            raise AssertionError(f"installed qip sources list missing profile: {profile_id}")
-    proof.append("install: qip sources list found all expected profiles")
+            raise AssertionError(f"installed qip-guru sources list missing profile: {profile_id}")
+    proof.append("install: qip-guru sources list found all expected profiles")
 
     project_dir = base / "installed_cli_uk_demo"
     _run_checked([str(qip_command), "new", str(project_dir), "--profile", "uk"], cwd=base)
@@ -179,6 +199,29 @@ def run_install_smoke(workdir: str | Path, python_executable: str | Path | None 
     if "943 476 5919" in redacted or "alex.fake@example.nhs.uk" in redacted:
         raise AssertionError("installed qip redaction left planted synthetic identifiers")
     proof.append(f"install: qip deid scan/redact handled synthetic fixture -> {redacted_path}")
+
+    run_chart_output = base / "installed_cli_ed_flow_run_chart.csv"
+    _run_checked(
+        [
+            str(qip_command),
+            "charts",
+            "run-chart",
+            str(ROOT / "examples" / "synthetic_ed_flow_qip.csv"),
+            "--value-column",
+            "median_time_to_initial_assessment_minutes",
+            "--date-column",
+            "week",
+            "--baseline-points",
+            "4",
+            "--out",
+            str(run_chart_output),
+        ],
+        cwd=base,
+    )
+    run_chart_text = run_chart_output.read_text(encoding="utf-8")
+    if "qip_shift_signal" not in run_chart_text or "yes" not in run_chart_text:
+        raise AssertionError("installed qip run-chart output missing signal annotation")
+    proof.append(f"install: qip charts run-chart analysed synthetic ED flow -> {run_chart_output}")
 
     return proof
 
@@ -209,10 +252,14 @@ def _prepared_workdir(raw_workdir: str | None) -> Iterator[Path]:
         yield Path(temp_dir)
 
 
-def _venv_commands(venv_dir: Path) -> tuple[Path, Path]:
+def _venv_commands(venv_dir: Path) -> tuple[Path, Path, Path]:
     if sys.platform == "win32":
-        return venv_dir / "Scripts" / "python.exe", venv_dir / "Scripts" / "qip.exe"
-    return venv_dir / "bin" / "python", venv_dir / "bin" / "qip"
+        return (
+            venv_dir / "Scripts" / "python.exe",
+            venv_dir / "Scripts" / "qip.exe",
+            venv_dir / "Scripts" / "qip-guru.exe",
+        )
+    return venv_dir / "bin" / "python", venv_dir / "bin" / "qip", venv_dir / "bin" / "qip-guru"
 
 
 def _run_checked(

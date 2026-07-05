@@ -1,0 +1,13 @@
+week,median_time_to_analgesia_minutes,notes
+2026-W01,58,synthetic baseline
+2026-W02,60,synthetic baseline
+2026-W03,57,synthetic baseline
+2026-W04,59,synthetic baseline
+2026-W05,55,synthetic intervention week 1
+2026-W06,51,synthetic intervention week 2
+2026-W07,49,synthetic intervention week 3
+2026-W08,46,synthetic intervention week 4
+2026-W09,44,synthetic intervention week 5
+2026-W10,42,synthetic intervention week 6
+2026-W11,40,synthetic intervention week 7
+2026-W12,39,synthetic intervention week 8

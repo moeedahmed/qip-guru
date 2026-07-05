@@ -7,6 +7,7 @@ This MVP is deliberately small:
 - Creates a local QIP project scaffold from static templates.
 - Attaches a source profile such as `global`, `uk`, `us`, `canada`, or `australia`.
 - Provides static agent skill guides that can be copied into an agent context.
+- Analyses synthetic or de-identified run-chart CSVs with simple shift/trend annotations.
 - Scans `.csv` and `.txt` files for a narrow set of deterministic identifier patterns.
 - Writes redacted copies without modifying the input file.
 - Uses Python standard library only at runtime.
@@ -20,7 +21,7 @@ This is an educational scaffold. It is not an information governance tool of rec
 - Python distribution: `qip-guru`.
 - Python import package: `qip_guru`.
 - Static skills: included as guide material in `skills/`.
-- Local CLI: included as `qip` / `python3 qip.py`.
+- Local CLI: included as `qip-guru`, `qip`, and `python3 qip.py`.
 - Engine: not yet. There is no hosted runtime, model orchestration layer, MCP server, dashboard, or background service.
 
 See `docs/PRODUCT_POSITIONING.md` for naming and non-claim guidance.
@@ -36,7 +37,7 @@ From a local checkout:
 
 ```bash
 python3 -m pip install -e ".[dev]"
-qip sources list
+qip-guru sources list
 ```
 
 > **Homebrew Python / modern Linux note:** If you see `error: externally-managed-environment` (PEP 668), create a virtual environment first:
@@ -58,8 +59,9 @@ Run these commands from inside a QIP Guru checkout after installing the local pa
 ```bash
 qip new demo_qip_project
 qip new uk_demo --profile uk
-qip sources list
+qip-guru sources list
 qip sources show global
+qip-guru charts run-chart examples/synthetic_ed_flow_qip.csv --value-column median_time_to_initial_assessment_minutes --date-column week --baseline-points 4 --out /tmp/ed_flow_run_chart.csv
 qip deid scan examples/synthetic_ward_audit.csv
 qip deid redact examples/synthetic_ward_audit.csv --out /tmp/synthetic_ward_audit_redacted.csv
 python3 -m pytest -q
@@ -98,6 +100,21 @@ qip sources show uk
 
 Source profiles live in `standards/`. They provide primary source anchors and boundaries for different jurisdictions. They do not replace local governance.
 
+### Analyse a run chart CSV
+
+```bash
+qip-guru charts run-chart <input.csv> --value-column <column> --out <annotated.csv>
+```
+
+Optional flags:
+
+- `--date-column <column>` validates a date/period column exists.
+- `--baseline-points <n>` calculates the median from the first `n` rows.
+- `--run-length <n>` changes the threshold for same-side shift signals.
+- `--trend-length <n>` changes the threshold for consecutive improvement/worsening trend signals.
+
+The command writes a new annotated CSV with `qip_` columns for baseline median, side of median, run length, shift signal, trend direction, trend length, and trend signal. It is a lightweight helper for synthetic or properly de-identified learning data, not a statistical process control package.
+
 ### Scan for supported identifier patterns
 
 ```bash
@@ -133,6 +150,17 @@ The input file is read as UTF-8 text and is never modified. The output path must
 
 Use the included fixture only for testing. Do not put real patient-identifiable data into this kit. If a QIP or audit requires real patient data, use locally approved NHS systems, agreed minimisation controls, and your organisation's IG process.
 
+## How QIP Guru Fits
+
+QIP Guru is not trying to replace mature QI platforms or statistical packages at this stage.
+
+- **Life QI** is the closest product benchmark: a paid QI project platform with dashboards, reporting, organisation portfolios, and community features. QIP Guru is local-first, open-source, and scaffold-focused.
+- **QI Macros** is the closest Excel/SPC benchmark: strong charts, Pareto, fishbone, templates, and statistics inside Excel. QIP Guru is not an Excel add-in and does not yet compete on SPC depth.
+- **IHI, NHS IMPACT, HQIP, SQUIRE, AHRQ, and Healthcare Excellence Canada** are source and training benchmarks. QIP Guru links users back to source-grounded methods rather than copying guidance.
+- **runcharter, qicharts, and spccharter** are open-source R charting benchmarks. QIP Guru's run-chart helper is deliberately lightweight; stronger SPC support may come later.
+
+The wedge is: open-source, local-first, agent-ready QIP scaffolding with source-grounded country profiles, synthetic-safe examples, and deterministic safety checks.
+
 ## Limitations
 
 - Pattern matching can miss identifiers and can produce false positives.
@@ -152,11 +180,11 @@ python3 scripts/release_check.py --install-smoke
 python3 scripts/check_sources.py --dry-run
 ```
 
-The smoke check proves UK and international profile scaffolds, source display, synthetic de-id scan/redact, static skill-guide safety anchors, and the installed `qip` console command path. See `docs/RELEASE_READINESS.md`.
+The smoke check proves UK and international profile scaffolds, source display, synthetic de-id scan/redact, synthetic run-chart analysis, static skill-guide safety anchors, and the installed `qip-guru` / `qip` console command paths. See `docs/RELEASE_READINESS.md`.
 
 ## Architecture
 
-The repo is the kit. The `skills/` directory contains static agent skill guides for use in an agent context; they are not auto-loaded by an agent runtime. The `qip.py` CLI handles deterministic local file work. The `standards/` directory holds global and country source profiles. See `docs/ARCHITECTURE.md`.
+The repo is the kit. The `skills/` directory contains static agent skill guides for use in an agent context; they are not auto-loaded by an agent runtime. The `qip.py` CLI handles deterministic local file work. The `examples/` directory holds synthetic fixtures and demo QIP datasets. The `standards/` directory holds global and country source profiles. See `docs/ARCHITECTURE.md`.
 
 ## Source Freshness
 

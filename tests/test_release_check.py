@@ -10,6 +10,7 @@ def test_release_check_exercises_public_safe_launch_proof(tmp_path):
     assert any("scaffold: uk" in line for line in proof)
     assert any("scaffold: global" in line for line in proof)
     assert any("deid:" in line for line in proof)
+    assert any("run-charts:" in line for line in proof)
     assert any("skills:" in line for line in proof)
 
     uk_source_map = (workdir / "uk_synthetic_demo" / "source-map.md").read_text(encoding="utf-8")
