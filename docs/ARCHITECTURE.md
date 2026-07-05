@@ -19,8 +19,10 @@ QIP Guru is an umbrella project, not one monolithic agent.
 
 3. Agent skills
    - static markdown guides in `skills/`
+   - YAML-ish frontmatter with `name` and `description`
    - tell an agent how to reason through QIP tasks
    - keep source-checking and local-governance cautions visible
+   - copied whole into an agent skill directory when used; this repo does not auto-load them
 
 4. CLI
    - deterministic file and scaffold work in `qip.py`
@@ -32,6 +34,7 @@ QIP Guru is an umbrella project, not one monolithic agent.
 5. Synthetic examples
    - CSV fixtures in `examples/`
    - safe demo data for ED flow, sepsis documentation, analgesia time, and de-id testing
+   - valid-checksum NHS-number fixtures use the NHS England synthetic `999` test range convention
    - no real patient, staff, incident, or organisation-sensitive data
 
 ## Why This Shape

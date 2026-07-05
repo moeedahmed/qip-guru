@@ -76,11 +76,14 @@ Files in `skills/` are static agent skill guides. They are written so a human or
 
 Skill guides should:
 
+- start with frontmatter containing `name` and `description`
 - name the source profile they rely on
 - ask for missing local governance information
 - separate QIP, audit, research, service evaluation, and incident learning
 - avoid drafting from real patient-identifiable data
 - state uncertainty plainly
+
+When copying a guide into an agent skill directory, copy the complete file and keep the frontmatter plus safety, pause, refusal, and source-check sections intact.
 
 ## Local Checks
 

@@ -29,8 +29,8 @@ POSTCODE_RE = re.compile(
 DATE_RE = re.compile(
     r"\b(?:\d{1,2}[/-]\d{1,2}[/-](?:19|20)\d{2}|(?:19|20)\d{2}[/-]\d{1,2}[/-]\d{1,2})\b"
 )
-PHONE_RE = re.compile(r"(?<!\d)(?:\+44\s?0?|0)(?:[\s-]?\d){9,10}(?!\d)")
-NHS_RE = re.compile(r"(?<!\d)(?:\d[\s-]?){9}\d(?!\d)")
+PHONE_RE = re.compile(r"(?<!\d)(?:\+44[ \t]?0?|0)(?:[ \t-]?\d){9,10}(?!\d)")
+NHS_RE = re.compile(r"(?<!\d)(?:\d[ \t-]?){9}\d(?!\d)")
 
 
 def scan_file(path: str | Path) -> list[Finding]:

@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import fnmatch
 from pathlib import Path
+import re
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
@@ -41,6 +43,25 @@ RUN_CHART_EXAMPLES = {
     "synthetic_sepsis_documentation_qip.csv": "complete_sepsis_screen_percent",
     "synthetic_analgesia_time_qip.csv": "median_time_to_analgesia_minutes",
 }
+NHS_LIKE_RE = re.compile(r"(?<!\d)(?:\d[ \t-]?){9}\d(?!\d)")
+GENERATED_ARTIFACT_PATTERNS = (
+    "*.py[co]",
+    "__pycache__/*",
+    "*/__pycache__/*",
+    ".pytest_cache/*",
+    "*/.pytest_cache/*",
+    "*.egg-info",
+    "*.egg-info/*",
+    "build/*",
+    "dist/*",
+    ".venv/*",
+    "venv/*",
+    ".coverage",
+    "coverage.xml",
+    "htmlcov/*",
+    "*_redacted.csv",
+    "*_run_chart.csv",
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -107,6 +128,14 @@ def run_release_checks(workdir: str | Path) -> list[str]:
     if "Patient Safety Incident Response Framework" not in uk_source_map:
         raise AssertionError("UK scaffold missing PSIRF source anchor")
 
+    valid_example_nhs_count = _check_example_nhs_numbers()
+    proof.append(f"examples: {valid_example_nhs_count} valid-checksum NHS fixture numbers use 999 test range")
+
+    generated_artifacts = _tracked_generated_artifacts()
+    if generated_artifacts:
+        raise AssertionError(f"tracked generated artifacts: {', '.join(generated_artifacts)}")
+    proof.append("tracked-files: no generated artifacts in git ls-files")
+
     fixture = ROOT / "examples" / "synthetic_ward_audit.csv"
     original = fixture.read_text(encoding="utf-8")
     findings = scan_file(fixture)
@@ -114,13 +143,16 @@ def run_release_checks(workdir: str | Path) -> list[str]:
     missing_findings = EXPECTED_FINDINGS - finding_types
     if missing_findings:
         raise AssertionError(f"synthetic fixture missing expected findings: {', '.join(sorted(missing_findings))}")
+    possible_nhs_count = sum(1 for finding in findings if finding.finding_type == "POSSIBLE_NHS_NUMBER")
+    if possible_nhs_count != 1:
+        raise AssertionError(f"synthetic fixture should contain one POSSIBLE_NHS_NUMBER, found {possible_nhs_count}")
 
     redacted_path = base / "synthetic_ward_audit_redacted.csv"
     redact_file(fixture, redacted_path)
     if fixture.read_text(encoding="utf-8") != original:
         raise AssertionError("redaction modified the source fixture")
     redacted = redacted_path.read_text(encoding="utf-8")
-    for planted_identifier in ("943 476 5919", "alex.fake@example.nhs.uk", "SW1A 1AA", "12/03/1978"):
+    for planted_identifier in ("999 000 0018", "alex.fake@example.nhs.uk", "SW1A 1AA", "12/03/1978"):
         if planted_identifier in redacted:
             raise AssertionError(f"redacted output still contains planted identifier: {planted_identifier}")
     proof.append(f"deid: {len(findings)} synthetic findings redacted -> {redacted_path}")
@@ -140,7 +172,7 @@ def run_release_checks(workdir: str | Path) -> list[str]:
     proof.append(f"run-charts: {len(RUN_CHART_EXAMPLES)} synthetic examples analysed -> {run_chart_dir}")
 
     _check_skill_guides()
-    proof.append(f"skills: {', '.join(sorted(REQUIRED_SKILLS))}")
+    proof.append(f"skills: frontmatter and anchors ok for {', '.join(sorted(REQUIRED_SKILLS))}")
 
     return proof
 
@@ -196,7 +228,7 @@ def run_install_smoke(workdir: str | Path, python_executable: str | Path | None 
     redacted_path = base / "installed_cli_redacted.csv"
     _run_checked([str(qip_command), "deid", "redact", str(fixture), "--out", str(redacted_path)], cwd=base)
     redacted = redacted_path.read_text(encoding="utf-8")
-    if "943 476 5919" in redacted or "alex.fake@example.nhs.uk" in redacted:
+    if "999 000 0018" in redacted or "alex.fake@example.nhs.uk" in redacted:
         raise AssertionError("installed qip redaction left planted synthetic identifiers")
     proof.append(f"install: qip deid scan/redact handled synthetic fixture -> {redacted_path}")
 
@@ -232,10 +264,95 @@ def _check_skill_guides() -> None:
         path = skills_dir / filename
         if not path.exists():
             raise AssertionError(f"missing skill guide: {filename}")
+        frontmatter = parse_skill_frontmatter(path)
+        expected_name = filename.removesuffix(".md")
+        if frontmatter["name"] != expected_name:
+            raise AssertionError(f"{filename} frontmatter name should be {expected_name}")
         text = path.read_text(encoding="utf-8")
         for anchor in anchors:
             if anchor not in text:
                 raise AssertionError(f"{filename} missing safety/source anchor: {anchor}")
+
+
+def parse_skill_frontmatter(path: Path) -> dict[str, str]:
+    """Parse the small YAML-ish frontmatter block used by static skill guides."""
+
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or lines[0] != "---":
+        raise AssertionError(f"{path.name} missing frontmatter opening")
+    try:
+        end = lines.index("---", 1)
+    except ValueError as exc:
+        raise AssertionError(f"{path.name} missing frontmatter closing") from exc
+
+    fields: dict[str, str] = {}
+    for line in lines[1:end]:
+        if not line.strip():
+            continue
+        if ":" not in line:
+            raise AssertionError(f"{path.name} frontmatter line missing colon: {line}")
+        key, value = line.split(":", 1)
+        key = key.strip()
+        value = value.strip()
+        if not key or not value:
+            raise AssertionError(f"{path.name} frontmatter field must be non-empty: {line}")
+        fields[key] = value
+
+    missing = {"name", "description"} - set(fields)
+    if missing:
+        raise AssertionError(f"{path.name} frontmatter missing: {', '.join(sorted(missing))}")
+    return fields
+
+
+def _check_example_nhs_numbers() -> int:
+    valid_count = 0
+    offenders: list[str] = []
+    for path in sorted((ROOT / "examples").glob("*.csv")):
+        text = path.read_text(encoding="utf-8")
+        for match in NHS_LIKE_RE.finditer(text):
+            digits = _normalised_digits(match.group(0))
+            if len(digits) != 10 or not _has_valid_nhs_checksum(digits):
+                continue
+            valid_count += 1
+            if not digits.startswith("999"):
+                offenders.append(f"{path.relative_to(ROOT)}:{digits}")
+
+    if offenders:
+        raise AssertionError(
+            "valid-checksum NHS fixture numbers must use the 999 test range: " + ", ".join(offenders)
+        )
+    if valid_count == 0:
+        raise AssertionError("examples must include at least one valid-checksum NHS fixture number")
+    return valid_count
+
+
+def _tracked_generated_artifacts() -> list[str]:
+    result = subprocess.run(["git", "ls-files", "-z"], cwd=ROOT, capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise AssertionError(f"git ls-files failed:\n{result.stderr}")
+    tracked = [path for path in result.stdout.split("\0") if path]
+    return sorted(path for path in tracked if _is_generated_artifact(path))
+
+
+def _is_generated_artifact(path: str) -> bool:
+    return any(fnmatch.fnmatch(path, pattern) for pattern in GENERATED_ARTIFACT_PATTERNS)
+
+
+def _normalised_digits(value: str) -> str:
+    return "".join(char for char in value if char.isdigit())
+
+
+def _has_valid_nhs_checksum(digits: str) -> bool:
+    if len(digits) != 10:
+        return False
+    total = sum(int(digit) * weight for digit, weight in zip(digits[:9], range(10, 1, -1)))
+    remainder = total % 11
+    check_digit = 11 - remainder
+    if check_digit == 11:
+        check_digit = 0
+    if check_digit == 10:
+        return False
+    return check_digit == int(digits[-1])
 
 
 @contextmanager

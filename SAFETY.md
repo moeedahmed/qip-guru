@@ -21,4 +21,6 @@ Before using any output in a real NHS QIP or audit:
 - Keep source data in approved systems only.
 - Check small numbers and rare combinations for re-identification risk.
 
-The included example data is synthetic test data with planted fake identifiers for scanner tests.
+The included example data is synthetic test data with planted fake identifiers for scanner tests. Valid-checksum NHS-number fixtures use the NHS England synthetic `999` test range convention, and one invalid-checksum NHS-like value is retained only to test `POSSIBLE_NHS_NUMBER`.
+
+Scanner date matching is deliberately narrow: two-digit-year dates such as `12/03/78` are out of scope and should not be treated as proof that a file is de-identified.

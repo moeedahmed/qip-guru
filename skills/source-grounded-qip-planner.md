@@ -1,3 +1,8 @@
+---
+name: source-grounded-qip-planner
+description: Plan QIP, audit, service-evaluation, research, or incident-learning work from source profiles and local gaps.
+---
+
 # Source-Grounded QIP Planner Skill
 
 Use this guide when an agent drafts a QIP, audit, or improvement plan from this kit.

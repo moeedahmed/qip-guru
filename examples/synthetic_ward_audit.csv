@@ -1,5 +1,5 @@
 SYNTHETIC TEST DATA - fake records with planted identifiers for scanner tests only
 record_id,patient_label,email,postcode,dob,phone,nhs_number,possible_nhs_number,measure_complete,notes
-SYN-001,Fake Patient Alpha,alex.fake@example.nhs.uk,SW1A 1AA,12/03/1978,07123 456789,943 476 5919,1234567890,yes,Synthetic row only
-SYN-002,Fake Patient Beta,beta.fake@example.nhs.uk,EC1A 1BB,1982-11-05,+44 7700 900123,401 023 2137,3333333334,no,Synthetic row only
-SYN-003,Fake Patient Gamma,gamma.fake@example.nhs.uk,W1A 0AX,07-09-1990,020 7946 0958,987 654 4321,1111111112,yes,Synthetic row only
+SYN-001,Fake Patient Alpha,alex.fake@example.nhs.uk,SW1A 1AA,12/03/1978,07123 456789,999 000 0018,999 000 0000,yes,Synthetic row only
+SYN-002,Fake Patient Beta,beta.fake@example.nhs.uk,EC1A 1BB,1982-11-05,+44 7700 900123,999 000 0050,,no,Synthetic row only
+SYN-003,Fake Patient Gamma,gamma.fake@example.nhs.uk,W1A 0AX,07-09-1990,020 7946 0958,999 000 0026,,yes,Synthetic row only

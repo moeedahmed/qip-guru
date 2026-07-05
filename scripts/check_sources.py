@@ -31,7 +31,8 @@ BROWSER_HEADERS = {
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Check QIP Guru source profile URLs.")
     parser.add_argument("--dry-run", action="store_true", help="list URLs without making network requests")
-    parser.add_argument("--timeout", type=float, default=10.0, help="request timeout in seconds")
+    parser.add_argument("--timeout", type=float, default=20.0, help="request timeout in seconds")
+    parser.add_argument("--retries", type=int, default=2, help="network attempts before reporting a source check result")
     args = parser.parse_args(argv)
 
     failures = 0
@@ -41,20 +42,36 @@ def main(argv: list[str] | None = None) -> int:
             if args.dry_run:
                 print(label)
                 continue
-            ok, detail = _check_url(source["url"], args.timeout)
+            ok, detail = _check_url(source["url"], args.timeout, args.retries)
             if ok:
                 print(f"OK | {label} | {detail}")
                 continue
-            if source.get("url_check", {}).get("allow_transient_failure"):
-                reason = source["url_check"].get("reason", "manual verification required")
-                print(f"WARN | {label} | {detail}; {reason}")
+            url_check = source.get("url_check", {})
+            if url_check.get("expected_slow") or url_check.get("allow_transient_failure"):
+                reason = url_check.get("reason", "manual verification required")
+                print(f"NOTE | {label} | expected slow/transient check: {detail}; {reason}")
                 continue
             print(f"FAIL | {label} | {detail}")
             failures += 1
     return 1 if failures else 0
 
 
-def _check_url(url: str, timeout: float) -> tuple[bool, str]:
+def _check_url(url: str, timeout: float, retries: int) -> tuple[bool, str]:
+    attempts = max(1, retries)
+    last_detail = "not checked"
+    for attempt in range(1, attempts + 1):
+        ok, detail = _check_once(url, timeout)
+        if ok:
+            if attempt == 1:
+                return True, detail
+            return True, f"{detail} after {attempt} attempts"
+        last_detail = detail
+    if attempts == 1:
+        return False, last_detail
+    return False, f"{last_detail} after {attempts} attempts"
+
+
+def _check_once(url: str, timeout: float) -> tuple[bool, str]:
     request = Request(url, method="HEAD", headers=BROWSER_HEADERS)
     try:
         with urlopen(request, timeout=timeout) as response:

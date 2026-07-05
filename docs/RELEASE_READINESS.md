@@ -53,8 +53,10 @@ The release smoke check must demonstrate all of the following without real patie
 - Source display for profiles through the CLI/source formatting path.
 - Synthetic run-chart annotation for ED flow, sepsis documentation, and analgesia-time demo datasets.
 - Synthetic identifier scan on `examples/synthetic_ward_audit.csv`.
+- Valid-checksum NHS-number fixtures use the NHS England synthetic `999` test range convention.
 - Redacted output written to a new file without modifying the input.
-- Static agent skill guides present with source-profile and safety pause anchors.
+- Static agent skill guides present with parseable `name`/`description` frontmatter plus source-profile and safety pause anchors.
+- No generated artifacts are tracked by `git ls-files`.
 - Local install smoke in a temporary venv, proving the packaged `qip-guru` and `qip` console commands can find installed data files and run outside the source tree.
 
 Equivalent release-smoke command:
@@ -74,6 +76,7 @@ Before any external/public action, verify:
 - Python import package: `qip_guru`
 - CLI commands: `qip-guru` and `qip`
 - no `.egg-info`, cache, build, dist, venv, or generated smoke-output files are included
+- no valid-checksum NHS fixture number outside the `999` test range is included
 - no real patient, staff, organisation-sensitive, or incident-identifiable data is included
 - `python3 scripts/release_check.py --install-smoke` passes in the extracted checkout
 
@@ -84,6 +87,7 @@ Before any external/public action, verify:
 - [ ] `docs/PRODUCT_POSITIONING.md` is current.
 - [ ] Source profile URLs have been re-checked and `checked_on` dates updated where needed.
 - [ ] All examples are synthetic and marked as synthetic.
+- [ ] Valid-checksum NHS-number examples use the NHS England synthetic `999` test range convention, with only one invalid-checksum row retained for `POSSIBLE_NHS_NUMBER`.
 - [ ] Synthetic run-chart examples are included and do not imply live clinical performance benchmarking.
 - [ ] No generated `.egg-info`, cache, build, or virtual environment files are included in the release diff.
 - [ ] Tests, compileall, source dry-run, and install smoke pass locally.

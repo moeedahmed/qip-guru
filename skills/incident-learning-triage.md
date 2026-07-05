@@ -1,3 +1,8 @@
+---
+name: incident-learning-triage
+description: Triage incident learning into local governance routes, QIP candidates, or audit candidates.
+---
+
 # Incident Learning Triage Skill
 
 Use this guide when a user asks whether an incident, safety event, or learning response should become QIP work.

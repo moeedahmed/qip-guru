@@ -16,6 +16,7 @@ def test_public_distribution_identity_matches_release_decision():
     assert set(pyproject["tool"]["setuptools"]["data-files"]) == {
         "qip-guru/checklists",
         "qip-guru/examples",
+        "qip-guru/skills",
         "qip-guru/standards",
         "qip-guru/templates",
     }

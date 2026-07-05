@@ -1,5 +1,9 @@
 # QIP Guru
 
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](.github/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 QIP Guru is a local-first open-source toolkit for clinicians, QI teams, and agent builders to structure healthcare improvement projects with source-grounded governance profiles, static agent skill guides, synthetic examples, and a deterministic assistive de-identification scanner. No patient data required.
 
 This MVP is deliberately small:
@@ -69,6 +73,41 @@ python3 -m pytest -q
 
 The scan command exits `1` when findings are present and `0` when no supported patterns are found. The redact command refuses to overwrite the input file and refuses to overwrite an existing output file.
 
+Actual `qip deid scan examples/synthetic_ward_audit.csv` output:
+
+```text
+3:28	EMAIL_ADDRESS	a***@example.nhs.uk
+3:53	UK_POSTCODE	SW1A ***
+3:62	DOB_LIKE_DATE	**/**/1978
+3:73	UK_PHONE_NUMBER	071******89
+3:86	NHS_NUMBER	999******8
+3:99	POSSIBLE_NHS_NUMBER	999******0
+4:27	EMAIL_ADDRESS	b***@example.nhs.uk
+4:52	UK_POSTCODE	EC1A ***
+4:61	DOB_LIKE_DATE	****-**-**
+4:72	UK_PHONE_NUMBER	447*******23
+4:88	NHS_NUMBER	999******0
+5:28	EMAIL_ADDRESS	g***@example.nhs.uk
+5:54	UK_POSTCODE	W1A ***
+5:62	DOB_LIKE_DATE	**-**-1990
+5:73	UK_PHONE_NUMBER	020******58
+5:87	NHS_NUMBER	999******6
+```
+
+Actual run-chart command output:
+
+```text
+/tmp/qip_guru_readme_ed_flow.csv	rows=12	median=41.5	shifts=4	trends=6
+```
+
+The annotated CSV begins:
+
+```csv
+week,median_time_to_initial_assessment_minutes,notes,qip_index,qip_value,qip_baseline_median,qip_side,qip_run_length,qip_shift_signal,qip_trend_direction,qip_trend_length,qip_trend_signal
+2026-W01,42,synthetic baseline,1,42,41.5,above,1,no,,1,no
+2026-W02,41,synthetic baseline,2,41,41.5,below,1,no,down,2,no
+```
+
 ## Commands
 
 ### Create a project scaffold
@@ -132,7 +171,7 @@ Supported deterministic detectors are currently UK-focused:
 - Valid NHS number using the modulus-11 checksum.
 - Invalid or format-only 10-digit NHS-like number as `POSSIBLE_NHS_NUMBER`.
 - UK postcode.
-- DOB-like date.
+- DOB-like date with a four-digit year. Two-digit-year dates such as `12/03/78` are out of scope.
 - UK phone number.
 - Email address.
 
@@ -149,6 +188,10 @@ The input file is read as UTF-8 text and is never modified. The output path must
 ## Public-Safe Use
 
 Use the included fixture only for testing. Do not put real patient-identifiable data into this kit. If a QIP or audit requires real patient data, use locally approved NHS systems, agreed minimisation controls, and your organisation's IG process.
+
+## Agent Skill Guides
+
+The `skills/*.md` files are static guide material with frontmatter fields for `name` and `description`. To use one in an agent runtime, copy the whole file into that agent's skill directory and keep the frontmatter plus refusal, pause, source, and safety sections intact. This repo does not auto-load those skills or provide an agent runtime.
 
 ## How QIP Guru Fits
 
@@ -180,7 +223,7 @@ python3 scripts/release_check.py --install-smoke
 python3 scripts/check_sources.py --dry-run
 ```
 
-The smoke check proves UK and international profile scaffolds, source display, synthetic de-id scan/redact, synthetic run-chart analysis, static skill-guide safety anchors, and the installed `qip-guru` / `qip` console command paths. See `docs/RELEASE_READINESS.md`.
+The smoke check proves UK and international profile scaffolds, source display, synthetic de-id scan/redact, the NHS 999 fixture convention, synthetic run-chart analysis, static skill-guide frontmatter and safety anchors, absence of tracked generated artifacts, and the installed `qip-guru` / `qip` console command paths. See `docs/RELEASE_READINESS.md`.
 
 ## Architecture
 

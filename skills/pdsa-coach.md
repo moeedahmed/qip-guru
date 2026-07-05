@@ -1,3 +1,8 @@
+---
+name: pdsa-coach
+description: Structure small safe PDSA cycles for QIP work using synthetic or de-identified examples.
+---
+
 # PDSA Coach Skill
 
 Use this static guide to structure a small Plan-Do-Study-Act cycle. Keep tests small, safe, reversible, and locally owned.

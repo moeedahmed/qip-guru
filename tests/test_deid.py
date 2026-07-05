@@ -7,7 +7,7 @@ def test_scan_text_classifies_planted_identifiers_with_positions():
     text = (
         "patient,email,postcode,dob,phone,nhs,possible\n"
         "Fake patient,alex.fake@example.nhs.uk,SW1A 1AA,12/03/1978,"
-        "07123 456789,943 476 5919,1234567890\n"
+        "07123 456789,999 000 0018,999 000 0000\n"
     )
 
     findings = scan_text(text)
@@ -15,8 +15,8 @@ def test_scan_text_classifies_planted_identifiers_with_positions():
 
     assert by_type["NHS_NUMBER"].line == 2
     assert by_type["NHS_NUMBER"].column > 1
-    assert by_type["NHS_NUMBER"].preview == "943******9"
-    assert by_type["POSSIBLE_NHS_NUMBER"].preview == "123******0"
+    assert by_type["NHS_NUMBER"].preview == "999******8"
+    assert by_type["POSSIBLE_NHS_NUMBER"].preview == "999******0"
     assert by_type["EMAIL_ADDRESS"].preview == "a***@example.nhs.uk"
     assert by_type["UK_POSTCODE"].preview == "SW1A ***"
     assert by_type["DOB_LIKE_DATE"].preview == "**/**/1978"
@@ -25,15 +25,15 @@ def test_scan_text_classifies_planted_identifiers_with_positions():
 
 def test_redact_text_replaces_each_finding_without_touching_clean_text():
     text = (
-        "Synthetic row for testing only: 943 476 5919, 1234567890, "
+        "Synthetic row for testing only: 999 000 0018, 999 000 0000, "
         "alex.fake@example.nhs.uk, SW1A 1AA, 12/03/1978, 07123 456789."
     )
 
     redacted = redact_text(text)
 
     assert "Synthetic row for testing only" in redacted
-    assert "943 476 5919" not in redacted
-    assert "1234567890" not in redacted
+    assert "999 000 0018" not in redacted
+    assert "999 000 0000" not in redacted
     assert "alex.fake@example.nhs.uk" not in redacted
     assert "SW1A 1AA" not in redacted
     assert "12/03/1978" not in redacted
@@ -47,14 +47,14 @@ def test_scan_file_redaction_does_not_modify_input(tmp_path):
 
     source = tmp_path / "input.csv"
     output = tmp_path / "redacted.csv"
-    original = "note,nhs,email\nSynthetic only,943 476 5919,alex.fake@example.nhs.uk\n"
+    original = "note,nhs,email\nSynthetic only,999 000 0018,alex.fake@example.nhs.uk\n"
     source.write_text(original, encoding="utf-8")
 
     redact_file(source, output)
 
     assert source.read_text(encoding="utf-8") == original
     redacted = output.read_text(encoding="utf-8")
-    assert "943 476 5919" not in redacted
+    assert "999 000 0018" not in redacted
     assert "alex.fake@example.nhs.uk" not in redacted
 
 
@@ -62,7 +62,7 @@ def test_redact_file_refuses_unsafe_paths(tmp_path):
     from qip_guru.deid import redact_file
 
     source = tmp_path / "input.txt"
-    source.write_text("Synthetic NHS 943 476 5919", encoding="utf-8")
+    source.write_text("Synthetic NHS 999 000 0018", encoding="utf-8")
 
     try:
         redact_file(source, source)
@@ -88,7 +88,7 @@ def test_synthetic_fixture_contains_only_fake_planted_identifiers():
     findings = scan_text(text)
 
     assert "SYNTHETIC TEST DATA" in text
-    assert "943 476 5919" in text
+    assert "999 000 0018" in text
     assert "alex.fake@example.nhs.uk" in text
     assert {finding.finding_type for finding in findings} >= {
         "NHS_NUMBER",
@@ -98,3 +98,56 @@ def test_synthetic_fixture_contains_only_fake_planted_identifiers():
         "DOB_LIKE_DATE",
         "UK_PHONE_NUMBER",
     }
+
+
+def test_nhs_and_phone_patterns_do_not_span_newlines():
+    text = (
+        "kind,value\n"
+        "split_nhs,999 123\n"
+        "4566\n"
+        "split_phone,07123\n"
+        "456789\n"
+    )
+
+    findings = scan_text(text)
+    finding_types = {finding.finding_type for finding in findings}
+
+    assert "NHS_NUMBER" not in finding_types
+    assert "POSSIBLE_NHS_NUMBER" not in finding_types
+    assert "UK_PHONE_NUMBER" not in finding_types
+
+
+def test_identifier_patterns_detect_csv_comma_adjacency():
+    text = "kind,nhs,phone,postcode\nrow,9990000018,07123456789,SW1A1AA\n"
+
+    findings = scan_text(text)
+    finding_types = {finding.finding_type for finding in findings}
+
+    assert "NHS_NUMBER" in finding_types
+    assert "UK_PHONE_NUMBER" in finding_types
+    assert "UK_POSTCODE" in finding_types
+
+
+def test_near_miss_postcodes_and_two_digit_year_dates_are_out_of_scope():
+    text = (
+        "postcode_like,date_like\n"
+        "SW1A 1A1,12/03/78\n"
+        "AA999 9AA,78-03-12\n"
+        "A1 1AAA,01/01/26\n"
+    )
+
+    findings = scan_text(text)
+    finding_types = {finding.finding_type for finding in findings}
+
+    assert "UK_POSTCODE" not in finding_types
+    assert "DOB_LIKE_DATE" not in finding_types
+
+
+def test_nhs_checksum_edge_cases():
+    text = "kind,nhs\ncheck_digit_10_rejected,999 000 0000\ncheck_digit_11_is_zero,999 000 0050\n"
+
+    findings = scan_text(text)
+    by_value = {finding.value: finding.finding_type for finding in findings}
+
+    assert by_value["999 000 0000"] == "POSSIBLE_NHS_NUMBER"
+    assert by_value["999 000 0050"] == "NHS_NUMBER"

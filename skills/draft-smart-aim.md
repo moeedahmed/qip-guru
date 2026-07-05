@@ -1,3 +1,8 @@
+---
+name: draft-smart-aim
+description: Draft SMART aims for QIP or audit work without using patient-identifiable details.
+---
+
 # Draft SMART Aim Skill
 
 Use this static guide to draft a SMART aim for a QIP or audit. Do not use real patient-identifiable data in prompts or examples.

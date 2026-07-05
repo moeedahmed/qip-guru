@@ -1,3 +1,8 @@
+---
+name: audit-standard-finder
+description: Organise audit-standard research while preserving source currency, local governance, and IG checks.
+---
+
 # Audit Standard Finder Skill
 
 Use this static guide to organise audit-standard research. It does not retrieve or verify sources by itself.

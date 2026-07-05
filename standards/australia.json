@@ -16,7 +16,7 @@
       "use": "national safety and quality standards, clinical governance, partnering with consumers, and accreditation context",
       "checked_on": "2026-07-05",
       "url_check": {
-        "allow_transient_failure": true,
+        "expected_slow": true,
         "reason": "official site may time out for command-line clients; verify in browser before public release"
       }
     },

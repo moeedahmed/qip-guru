@@ -21,6 +21,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Scientific/Engineering :: Medical Science Apps."
 ]
 dependencies = []
@@ -41,5 +42,6 @@ include = ["qip_guru*"]
 [tool.setuptools.data-files]
 "qip-guru/checklists" = ["checklists/*.md"]
 "qip-guru/examples" = ["examples/*.csv", "examples/*.md"]
+"qip-guru/skills" = ["skills/*.md"]
 "qip-guru/standards" = ["standards/*.json"]
 "qip-guru/templates" = ["templates/*.md"]
