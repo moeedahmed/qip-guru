@@ -8,6 +8,7 @@ from contextlib import contextmanager
 import fnmatch
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
@@ -186,7 +187,7 @@ def run_install_smoke(workdir: str | Path, python_executable: str | Path | None 
     base.mkdir(parents=True, exist_ok=True)
 
     venv_dir = base / ".venv"
-    python = str(python_executable or sys.executable)
+    python = str(python_executable or _select_install_smoke_python())
 
     # Python 3.14 venvs in this environment do not bundle setuptools. System
     # site packages let the no-network install use the already available build backend.
@@ -256,6 +257,39 @@ def run_install_smoke(workdir: str | Path, python_executable: str | Path | None 
     proof.append(f"install: qip charts run-chart analysed synthetic ED flow -> {run_chart_output}")
 
     return proof
+
+
+def _select_install_smoke_python() -> str:
+    """Pick a local Python that can run a no-network, no-build-isolation install."""
+
+    candidates = [
+        sys.executable,
+        shutil.which("python3.14"),
+        shutil.which("python3.13"),
+        shutil.which("python3.12"),
+        shutil.which("python3.11"),
+        shutil.which("python3"),
+    ]
+    seen: set[str] = set()
+    for candidate in candidates:
+        if not candidate:
+            continue
+        resolved = str(Path(candidate).resolve())
+        if resolved in seen:
+            continue
+        seen.add(resolved)
+        result = subprocess.run(
+            [resolved, "-c", "import setuptools.build_meta"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode == 0:
+            return resolved
+    raise RuntimeError(
+        "install smoke needs a local Python with setuptools.build_meta available "
+        "because it runs without network access or build isolation"
+    )
 
 
 def _check_skill_guides() -> None:

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from http.client import RemoteDisconnected
 from pathlib import Path
 import socket
 import sys
@@ -80,10 +81,12 @@ def _check_once(url: str, timeout: float) -> tuple[bool, str]:
         if exc.code in {403, 405}:
             return _check_get(url, timeout)
         return False, str(exc.code)
-    except TimeoutError:
+    except (TimeoutError, socket.timeout):
         return False, "timeout"
-    except socket.timeout:
-        return False, "timeout"
+    except RemoteDisconnected:
+        return False, "remote disconnected"
+    except ConnectionResetError:
+        return False, "connection reset"
     except URLError as exc:
         return False, str(exc.reason)
 
@@ -95,10 +98,12 @@ def _check_get(url: str, timeout: float) -> tuple[bool, str]:
             return response.status < 400, f"GET {response.status}"
     except HTTPError as exc:
         return False, f"GET {exc.code}"
-    except TimeoutError:
+    except (TimeoutError, socket.timeout):
         return False, "GET timeout"
-    except socket.timeout:
-        return False, "GET timeout"
+    except RemoteDisconnected:
+        return False, "GET remote disconnected"
+    except ConnectionResetError:
+        return False, "GET connection reset"
     except URLError as exc:
         return False, str(exc.reason)
 
