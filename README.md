@@ -40,6 +40,16 @@ python3 -m pip install -e ".[dev]"
 qip sources list
 ```
 
+> **Homebrew Python / modern Linux note:** If you see `error: externally-managed-environment` (PEP 668), create a virtual environment first:
+>
+> ```bash
+> python3 -m venv .venv
+> source .venv/bin/activate
+> python3 -m pip install -e ".[dev]"
+> ```
+>
+> Alternatively, install with `--break-system-packages`, though a venv is strongly recommended.
+
 You can also run the repo-local script directly with `python3 qip.py ...`. If your environment maps `python` to Python 3.11 or newer, `python` is fine.
 
 ## Quickstart
