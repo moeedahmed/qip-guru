@@ -1,4 +1,5 @@
 import json
+import re
 
 import pytest
 
@@ -88,7 +89,7 @@ def test_malformed_json_has_helpful_value_error(monkeypatch, tmp_path):
     path = write_profile(tmp_path, None, contents='{\n  "id":')
     monkeypatch.setattr(sources_module, "STANDARDS_DIR", tmp_path)
 
-    with pytest.raises(ValueError, match=rf"^{path} contains malformed JSON at line 2, column 8$"):
+    with pytest.raises(ValueError, match=rf"^{re.escape(str(path))} contains malformed JSON at line 2, column 8$"):
         load_profile("test")
 
 
