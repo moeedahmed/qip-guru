@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import qip_guru.deid as deid
 from qip_guru.deid import redact_text, scan_text
 
 
@@ -151,3 +152,28 @@ def test_nhs_checksum_edge_cases():
 
     assert by_value["999 000 0000"] == "POSSIBLE_NHS_NUMBER"
     assert by_value["999 000 0050"] == "NHS_NUMBER"
+
+
+def test_unicode_digits_are_not_treated_as_identifiers():
+    text = (
+        "unicode_date,١٢/٠٣/١٩٧٨\n"
+        "unicode_phone,٠٧١٢٣ ٤٥٦٧٨٩\n"
+        "unicode_nhs,٩٩٩ ٠٠٠ ٠٠١٨\n"
+    )
+
+    assert scan_text(text) == []
+    assert deid._normalised_digits("1١2٢3٣") == "123"
+
+
+def test_dob_like_dates_use_full_calendar_bounds(monkeypatch):
+    class FixedDate(deid.date):
+        @classmethod
+        def today(cls):
+            return cls(2026, 9, 3)
+
+    monkeypatch.setattr(deid, "date", FixedDate)
+    text = "lower,01/01/1900\ntoday,2026-09-03\nfuture,04/09/2026\n"
+
+    values = {finding.value for finding in scan_text(text)}
+
+    assert values == {"01/01/1900", "2026-09-03"}
