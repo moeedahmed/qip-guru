@@ -13,8 +13,25 @@ INSTALLED_DATA_ROOT = Path(sys.prefix) / "qip-guru"
 def data_path(*parts: str) -> Path:
     """Return a data path from source checkout or installed package data."""
 
+    if not parts:
+        return SOURCE_ROOT
+
+    for part in parts:
+        if not isinstance(part, str):
+            raise TypeError("data path components must be strings")
+
+        component = Path(part)
+        if component.is_absolute():
+            raise ValueError("data path components must be relative")
+        if ".." in component.parts:
+            raise ValueError("data path components must not contain '..'")
+
     for root in (SOURCE_ROOT, INSTALLED_DATA_ROOT):
         candidate = root.joinpath(*parts)
+        resolved_root = root.resolve()
+        resolved_candidate = candidate.resolve()
+        if not resolved_candidate.is_relative_to(resolved_root):
+            raise ValueError("data path escapes its data root")
         if candidate.exists():
             return candidate
     return SOURCE_ROOT.joinpath(*parts)
