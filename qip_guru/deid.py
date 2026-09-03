@@ -27,10 +27,11 @@ POSTCODE_RE = re.compile(
     re.IGNORECASE,
 )
 DATE_RE = re.compile(
-    r"\b(?:\d{1,2}[/-]\d{1,2}[/-](?:19|20)\d{2}|(?:19|20)\d{2}[/-]\d{1,2}[/-]\d{1,2})\b"
+    r"\b(?:[0-9]{1,2}[/-][0-9]{1,2}[/-](?:19|20)[0-9]{2}|"
+    r"(?:19|20)[0-9]{2}[/-][0-9]{1,2}[/-][0-9]{1,2})\b"
 )
-PHONE_RE = re.compile(r"(?<!\d)(?:\+44[ \t]?0?|0)(?:[ \t-]?\d){9,10}(?!\d)")
-NHS_RE = re.compile(r"(?<!\d)(?:\d[ \t-]?){9}\d(?!\d)")
+PHONE_RE = re.compile(r"(?<![0-9])(?:\+44[ \t]?0?|0)(?:[ \t-]?[0-9]){9,10}(?![0-9])")
+NHS_RE = re.compile(r"(?<![0-9])(?:[0-9][ \t-]?){9}[0-9](?![0-9])")
 
 
 def scan_file(path: str | Path) -> list[Finding]:
@@ -159,7 +160,7 @@ def _non_overlapping(raw: list[tuple[int, int, str, str]]) -> list[tuple[int, in
 
 
 def _normalised_digits(value: str) -> str:
-    return "".join(char for char in value if char.isdigit())
+    return "".join(char for char in value if char in "0123456789")
 
 
 def _has_valid_nhs_checksum(digits: str) -> bool:
@@ -186,7 +187,7 @@ def _is_valid_dob_like_date(value: str) -> bool:
         parsed = date(year, month, day)
     except (ValueError, IndexError):
         return False
-    return 1900 <= parsed.year <= date.today().year
+    return date(1900, 1, 1) <= parsed <= date.today()
 
 
 def _mask_phone(value: str) -> str:
