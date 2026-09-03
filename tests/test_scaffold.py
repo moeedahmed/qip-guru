@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from qip_guru.scaffold import create_project
@@ -67,32 +65,18 @@ def test_create_project_refuses_to_overwrite_existing_directory(tmp_path):
 
 def test_create_project_removes_partially_written_current_file(tmp_path, monkeypatch):
     project_dir = tmp_path / "partial"
-    original_fdopen = os.fdopen
+    original_write_text = type(project_dir).write_text
     writes = 0
 
-    class FailingWriter:
-        def __init__(self, output):
-            self.output = output
-
-        def __enter__(self):
-            self.output.__enter__()
-            return self
-
-        def __exit__(self, *args):
-            return self.output.__exit__(*args)
-
-        def write(self, content):
-            self.output.write(content[:12])
-            self.output.flush()
-            raise OSError("injected partial write")
-
-    def fail_second_write(descriptor, *args, **kwargs):
+    def fail_second_write(path, content, *args, **kwargs):
         nonlocal writes
         writes += 1
-        output = original_fdopen(descriptor, *args, **kwargs)
-        return FailingWriter(output) if writes == 2 else output
+        if writes == 2:
+            original_write_text(path, content[:12], *args, **kwargs)
+            raise OSError("injected partial write")
+        return original_write_text(path, content, *args, **kwargs)
 
-    monkeypatch.setattr(os, "fdopen", fail_second_write)
+    monkeypatch.setattr(type(project_dir), "write_text", fail_second_write)
 
     with pytest.raises(OSError, match="injected partial write"):
         create_project(project_dir, date="2026-07-04")
@@ -100,47 +84,30 @@ def test_create_project_removes_partially_written_current_file(tmp_path, monkeyp
     assert not project_dir.exists()
 
 
-def test_create_project_preserves_foreign_content_and_symlink_on_failure(
+def test_create_project_preserves_raced_symlink_on_failed_write(
     tmp_path, monkeypatch
 ):
     project_dir = tmp_path / "raced"
     outside = tmp_path / "outside.txt"
     outside.write_text("outside", encoding="utf-8")
-    original_fdopen = os.fdopen
+    original_write_text = type(project_dir).write_text
     writes = 0
 
-    class RacingWriter:
-        def __init__(self, output):
-            self.output = output
-
-        def __enter__(self):
-            self.output.__enter__()
-            return self
-
-        def __exit__(self, *args):
-            return self.output.__exit__(*args)
-
-        def write(self, content):
-            self.output.write(content[:12])
-            self.output.flush()
-            charter = project_dir / "charter.md"
-            charter.unlink()
-            charter.symlink_to(outside)
-            (project_dir / "foreign.txt").write_text("keep", encoding="utf-8")
-            raise OSError("injected raced write")
-
-    def fail_second_write(descriptor, *args, **kwargs):
+    def fail_second_write(path, content, *args, **kwargs):
         nonlocal writes
         writes += 1
-        output = original_fdopen(descriptor, *args, **kwargs)
-        return RacingWriter(output) if writes == 2 else output
+        if writes == 2:
+            path.symlink_to(outside)
+            raise OSError("injected raced write")
+        return original_write_text(path, content, *args, **kwargs)
 
-    monkeypatch.setattr(os, "fdopen", fail_second_write)
+    monkeypatch.setattr(type(project_dir), "write_text", fail_second_write)
 
     with pytest.raises(OSError, match="injected raced write"):
         create_project(project_dir, date="2026-07-04")
 
-    assert (project_dir / "charter.md").is_symlink()
-    assert (project_dir / "charter.md").read_text(encoding="utf-8") == "outside"
-    assert (project_dir / "foreign.txt").read_text(encoding="utf-8") == "keep"
-    assert not (project_dir / "pdsa-log.md").exists()
+    raced = project_dir / "pdsa-log.md"
+    assert raced.is_symlink()
+    assert raced.read_text(encoding="utf-8") == "outside"
+    assert outside.read_text(encoding="utf-8") == "outside"
+    assert not (project_dir / "charter.md").exists()

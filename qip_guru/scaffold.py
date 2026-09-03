@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import stat
 from contextlib import suppress
 from datetime import date as date_type
@@ -29,22 +28,31 @@ def _write_new_file(
     content: str,
     created: list[tuple[Path, int, int]],
 ) -> None:
-    """Exclusively create a file and record its identity before writing it."""
+    """Write a new file and record its identity for guarded rollback."""
 
-    flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
-    if hasattr(os, "O_NOFOLLOW"):
-        flags |= os.O_NOFOLLOW
-    descriptor = os.open(destination, flags, 0o666)
-    file_stat = os.fstat(descriptor)
-    created.append((destination, file_stat.st_dev, file_stat.st_ino))
     try:
-        with os.fdopen(descriptor, "w", encoding="utf-8") as output:
-            descriptor = -1
-            output.write(content)
-    finally:
-        if descriptor != -1:
-            with suppress(OSError):
-                os.close(descriptor)
+        destination.lstat()
+    except FileNotFoundError:
+        pass
+    else:
+        raise FileExistsError(f"scaffold file already exists: {destination}")
+
+    try:
+        destination.write_text(content, encoding="utf-8")
+    except Exception:
+        # write_text may have created a partial regular file before failing.  It
+        # may also have been replaced by a foreign object; only regular files
+        # are candidates for the identity-checked rollback below.
+        with suppress(OSError):
+            file_stat = destination.lstat()
+            if stat.S_ISREG(file_stat.st_mode):
+                created.append((destination, file_stat.st_dev, file_stat.st_ino))
+        raise
+
+    file_stat = destination.lstat()
+    if not stat.S_ISREG(file_stat.st_mode):
+        raise FileExistsError(f"scaffold file is not a regular file: {destination}")
+    created.append((destination, file_stat.st_dev, file_stat.st_ino))
 
 
 def _remove_created_file(path: Path, device: int, inode: int) -> None:
