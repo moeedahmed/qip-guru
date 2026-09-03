@@ -59,7 +59,17 @@ def test_data_path_allows_harmless_components(monkeypatch, tmp_path, parts):
     assert paths.data_path(*parts) == source.joinpath(*parts)
 
 
-@pytest.mark.parametrize("parts", [("/absolute",), ("safe", "/absolute")])
+@pytest.mark.parametrize(
+    "parts",
+    [
+        ("/absolute",),
+        ("safe", "/absolute"),
+        (r"\absolute",),
+        (r"C:\absolute",),
+        (r"C:drive-relative",),
+        (r"\\server\share\file",),
+    ],
+)
 def test_data_path_rejects_absolute_components(monkeypatch, tmp_path, parts):
     set_data_roots(monkeypatch, tmp_path)
 
@@ -67,7 +77,9 @@ def test_data_path_rejects_absolute_components(monkeypatch, tmp_path, parts):
         paths.data_path(*parts)
 
 
-@pytest.mark.parametrize("part", ["..", "../outside", "nested/../outside"])
+@pytest.mark.parametrize(
+    "part", ["..", "../outside", "nested/../outside", r"..\outside"]
+)
 def test_data_path_rejects_traversal_segments(monkeypatch, tmp_path, part):
     set_data_roots(monkeypatch, tmp_path)
 

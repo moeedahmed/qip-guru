@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import sys
 
 
@@ -20,10 +20,10 @@ def data_path(*parts: str) -> Path:
         if not isinstance(part, str):
             raise TypeError("data path components must be strings")
 
-        component = Path(part)
-        if component.is_absolute():
+        components = (PurePosixPath(part), PureWindowsPath(part))
+        if any(component.anchor for component in components):
             raise ValueError("data path components must be relative")
-        if ".." in component.parts:
+        if any(".." in component.parts for component in components):
             raise ValueError("data path components must not contain '..'")
 
     for root in (SOURCE_ROOT, INSTALLED_DATA_ROOT):
