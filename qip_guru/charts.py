@@ -4,8 +4,22 @@ from __future__ import annotations
 
 import csv
 from dataclasses import dataclass
+import math
 from pathlib import Path
 from statistics import median
+
+
+_OUTPUT_FIELDS = (
+    "qip_index",
+    "qip_value",
+    "qip_baseline_median",
+    "qip_side",
+    "qip_run_length",
+    "qip_shift_signal",
+    "qip_trend_direction",
+    "qip_trend_length",
+    "qip_trend_signal",
+)
 
 
 @dataclass(frozen=True)
@@ -45,10 +59,33 @@ def analyse_run_chart_csv(
         raise ValueError("trend-length must be at least 2")
 
     with source.open(newline="", encoding="utf-8") as handle:
-        rows = list(csv.DictReader(handle))
+        reader = csv.reader(handle, strict=True)
+        try:
+            fieldnames = next(reader)
+        except StopIteration as exc:
+            raise ValueError("input CSV is missing a header row") from exc
+        except csv.Error as exc:
+            raise ValueError(f"malformed CSV header row: {exc}") from exc
+
+        _validate_headers(fieldnames)
+        rows: list[dict[str, str]] = []
+        row_number = 2
+        while True:
+            try:
+                values_in_row = next(reader)
+            except StopIteration:
+                break
+            except csv.Error as exc:
+                raise ValueError(f"malformed CSV row {row_number}: {exc}") from exc
+            if len(values_in_row) != len(fieldnames):
+                raise ValueError(
+                    f"malformed CSV row {row_number}: expected {len(fieldnames)} fields, "
+                    f"found {len(values_in_row)}"
+                )
+            rows.append(dict(zip(fieldnames, values_in_row, strict=True)))
+            row_number += 1
     if not rows:
         raise ValueError("input CSV has no data rows")
-    fieldnames = list(rows[0].keys())
     if value_column not in fieldnames:
         raise ValueError(f"value column not found: {value_column}")
     if date_column and date_column not in fieldnames:
@@ -61,18 +98,8 @@ def analyse_run_chart_csv(
     baseline_median = float(median(baseline_values))
 
     annotated = _annotate_rows(rows, values, baseline_median, run_length, trend_length)
-    output_fields = fieldnames + [
-        "qip_index",
-        "qip_value",
-        "qip_baseline_median",
-        "qip_side",
-        "qip_run_length",
-        "qip_shift_signal",
-        "qip_trend_direction",
-        "qip_trend_length",
-        "qip_trend_signal",
-    ]
-    with destination.open("w", newline="", encoding="utf-8") as handle:
+    output_fields = fieldnames + list(_OUTPUT_FIELDS)
+    with destination.open("x", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=output_fields)
         writer.writeheader()
         writer.writerows(annotated)
@@ -86,11 +113,32 @@ def analyse_run_chart_csv(
     )
 
 
+def _validate_headers(fieldnames: list[str]) -> None:
+    if not fieldnames:
+        raise ValueError("input CSV header row is blank")
+    for column_number, fieldname in enumerate(fieldnames, start=1):
+        if not fieldname.strip():
+            raise ValueError(f"input CSV has a blank header at column {column_number}")
+
+    duplicate_headers = sorted({name for name in fieldnames if fieldnames.count(name) > 1})
+    if duplicate_headers:
+        raise ValueError(f"input CSV has duplicate header: {duplicate_headers[0]}")
+
+    conflicting_headers = sorted(set(fieldnames).intersection(_OUTPUT_FIELDS))
+    if conflicting_headers:
+        raise ValueError(f"input CSV header conflicts with generated output column: {conflicting_headers[0]}")
+
+
 def _parse_value(raw_value: str, row_number: int) -> float:
+    if not raw_value.strip():
+        raise ValueError(f"value column is blank at CSV row {row_number}")
     try:
-        return float(raw_value)
+        value = float(raw_value)
     except ValueError as exc:
         raise ValueError(f"value column contains non-numeric data at CSV row {row_number}") from exc
+    if not math.isfinite(value):
+        raise ValueError(f"value column contains a non-finite number at CSV row {row_number}")
+    return value
 
 
 def _annotate_rows(
