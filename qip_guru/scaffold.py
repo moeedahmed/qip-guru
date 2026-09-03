@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import stat
 from contextlib import suppress
 from datetime import date as date_type
 from pathlib import Path
@@ -20,6 +21,52 @@ SCAFFOLD_FILES = (
     (data_path("checklists", "deid-checklist.md"), "deid-checklist.md"),
     (data_path("checklists", "qip-registration.md"), "qip-registration.md"),
 )
+
+
+def _write_new_file(
+    destination: Path,
+    content: str,
+    created: list[tuple[Path, int, int]],
+) -> None:
+    """Write a new file and record its identity for guarded rollback."""
+
+    try:
+        destination.lstat()
+    except FileNotFoundError:
+        pass
+    else:
+        raise FileExistsError(f"scaffold file already exists: {destination}")
+
+    try:
+        destination.write_text(content, encoding="utf-8")
+    except Exception:
+        # write_text may have created a partial regular file before failing.  It
+        # may also have been replaced by a foreign object; only regular files
+        # are candidates for the identity-checked rollback below.
+        with suppress(OSError):
+            file_stat = destination.lstat()
+            if stat.S_ISREG(file_stat.st_mode):
+                created.append((destination, file_stat.st_dev, file_stat.st_ino))
+        raise
+
+    file_stat = destination.lstat()
+    if not stat.S_ISREG(file_stat.st_mode):
+        raise FileExistsError(f"scaffold file is not a regular file: {destination}")
+    created.append((destination, file_stat.st_dev, file_stat.st_ino))
+
+
+def _remove_created_file(path: Path, device: int, inode: int) -> None:
+    """Remove path only if it is still the regular file created by this call."""
+
+    try:
+        current = path.lstat()
+        if not stat.S_ISREG(current.st_mode):
+            return
+        if (current.st_dev, current.st_ino) != (device, inode):
+            return
+        path.unlink()
+    except OSError:
+        pass
 
 
 def create_project(
@@ -44,21 +91,31 @@ def create_project(
 
     target.mkdir(parents=False)
     created: list[Path] = []
+    created_files: list[tuple[Path, int, int]] = []
+    target_stat = None
     try:
+        target_stat = target.lstat()
         for source, filename in SCAFFOLD_FILES:
             content = source.read_text(encoding="utf-8")
             for placeholder, value in replacements.items():
                 content = content.replace(placeholder, value)
             destination = target / filename
-            destination.write_text(content, encoding="utf-8")
+            _write_new_file(destination, content, created_files)
             created.append(destination)
         source_map = target / "source-map.md"
-        source_map.write_text(source_map_markdown(profile), encoding="utf-8")
+        _write_new_file(source_map, source_map_markdown(profile), created_files)
         created.append(source_map)
     except Exception:
-        for path in created:
-            path.unlink(missing_ok=True)
+        for path, device, inode in reversed(created_files):
+            _remove_created_file(path, device, inode)
         with suppress(OSError):
-            target.rmdir()
+            current_target = target.lstat()
+            if (
+                target_stat is not None
+                and stat.S_ISDIR(current_target.st_mode)
+                and (current_target.st_dev, current_target.st_ino)
+                == (target_stat.st_dev, target_stat.st_ino)
+            ):
+                target.rmdir()
         raise
     return created

@@ -1,3 +1,5 @@
+import pytest
+
 from qip_guru.scaffold import create_project
 
 
@@ -59,3 +61,53 @@ def test_create_project_refuses_to_overwrite_existing_directory(tmp_path):
         raise AssertionError("create_project should refuse existing directories")
 
     assert (project_dir / "keep.txt").read_text(encoding="utf-8") == "do not touch"
+
+
+def test_create_project_removes_partially_written_current_file(tmp_path, monkeypatch):
+    project_dir = tmp_path / "partial"
+    original_write_text = type(project_dir).write_text
+    writes = 0
+
+    def fail_second_write(path, content, *args, **kwargs):
+        nonlocal writes
+        writes += 1
+        if writes == 2:
+            original_write_text(path, content[:12], *args, **kwargs)
+            raise OSError("injected partial write")
+        return original_write_text(path, content, *args, **kwargs)
+
+    monkeypatch.setattr(type(project_dir), "write_text", fail_second_write)
+
+    with pytest.raises(OSError, match="injected partial write"):
+        create_project(project_dir, date="2026-07-04")
+
+    assert not project_dir.exists()
+
+
+def test_create_project_preserves_raced_symlink_on_failed_write(
+    tmp_path, monkeypatch
+):
+    project_dir = tmp_path / "raced"
+    outside = tmp_path / "outside.txt"
+    outside.write_text("outside", encoding="utf-8")
+    original_write_text = type(project_dir).write_text
+    writes = 0
+
+    def fail_second_write(path, content, *args, **kwargs):
+        nonlocal writes
+        writes += 1
+        if writes == 2:
+            path.symlink_to(outside)
+            raise OSError("injected raced write")
+        return original_write_text(path, content, *args, **kwargs)
+
+    monkeypatch.setattr(type(project_dir), "write_text", fail_second_write)
+
+    with pytest.raises(OSError, match="injected raced write"):
+        create_project(project_dir, date="2026-07-04")
+
+    raced = project_dir / "pdsa-log.md"
+    assert raced.is_symlink()
+    assert raced.read_text(encoding="utf-8") == "outside"
+    assert outside.read_text(encoding="utf-8") == "outside"
+    assert not (project_dir / "charter.md").exists()
