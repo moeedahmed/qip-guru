@@ -56,6 +56,37 @@ information-governance tool of record.
   convention for NHS numbers)
 - Never remove the `SAFETY.md` boundaries when editing skill guides or docs
 
+---
+
+## Scope Guard
+
+Complete the current task with the minimum sufficient change.
+
+- Before editing, define the outcome, non-goals, expected files, and proof.
+- Read the relevant code, tests, and configuration directly; resolve ambiguous or unverified premises first.
+- Reuse existing helpers, patterns, and test setup. Fix the root cause rather than stacking workarounds.
+- Add an abstraction only for an explicit requirement or a second real caller in the current task.
+- Preserve behaviour outside the requested change and remove replaced code unless compatibility is explicit.
+- Run the narrowest relevant existing tests and extend the nearest relevant test before creating new test infrastructure.
+- Stop and re-scope before adding an unexpected dependency, service, public API, schema, storage or wire-format change, duplicate implementation, unrelated file, or speculative cleanup.
+- Finish with only necessary files changed and no debug code, backup copies, scratch files, or dead paths.
+
+## Working Modes
+
+- Default to bounded execution inside the current approved task; keep the Scope Guard plan internal unless Moeed asks for it or a real boundary emerges.
+- Use a visible plan for a material architectural decision, protected effect, or genuine scope expansion—not an arbitrary file count.
+- Use one worker by default. Split only genuinely independent work, with one writer per file and branch.
+- Self-correct with the named build or tests before reporting, and summarise the verified outcome plainly.
+
+## Decision Boundaries
+
+- Decide safe reversible implementation details within the requested outcome.
+- Ask only when a material ambiguity changes the outcome or when the work crosses the controlling session's protected-action boundary.
+- Treat new dependencies, database or storage mutations, schema/API changes, auth/security changes, deployment, destructive Git/process actions, and external effects as boundaries unless already explicitly authorised.
+- This file never grants authority beyond the controlling session and profile policy.
+
+---
+
 ## Compatibility
 
 `CLAUDE.md` is a symlink to this file for Claude Code compatibility. Do not
